@@ -4,6 +4,78 @@
 $page_title = 'ОдноЭтажники.РФ - Архитектура и Строительство | Полный цикл услуг';
 $page_description = 'ОдноЭтажники.РФ - архитектура, проектирование и строительство. 15+ лет опыта, 200+ проектов, гарантия 5 лет. Консультация бесплатно!';
 
+// Абсолютные адреса нужны микроразметке: относительные URL Search/AI-краулеры не принимают.
+$siteUrl    = 'https://xn--80ahhialrcec8b1i.xn--p1ai';
+$houseImage = $siteUrl . '/images/projects/lesnye-polyany/exterior/lesnye-polyany-exterior-modern-japandi-chalet-noki-overhangs-01.jpg';
+$houseName  = 'Готовый одноэтажный дом 90.8 м² с сауной и участком 3 сотки';
+$houseDesc  = 'Энергоэффективный дом в Новой Москве, КП Лесные Поляны. Плита с водяным теплым полом, потолки 3.3 м, отделка под ключ, баня с парогенератором. Возможна льготная ипотека.';
+
+// JSON-LD: RealEstateListing описывает само объявление, mainEntity — объект недвижимости.
+$houseSchema = [
+    '@context'    => 'https://schema.org',
+    '@type'       => 'RealEstateListing',
+    'name'        => $houseName,
+    'description' => $houseDesc,
+    'url'         => $siteUrl . '/',
+    'datePosted'  => '2026-10-22',
+    'image'       => [$houseImage],
+    'mainEntity'  => [
+        '@type'          => 'SingleFamilyResidence',
+        'name'           => $houseName,
+        'description'    => $houseDesc,
+        'numberOfRooms'  => 3,
+        'floorSize'      => [
+            '@type'    => 'QuantitativeValue',
+            'value'    => 90.8,
+            'unitCode' => 'MTK',
+            'unitText' => 'кв.м',
+        ],
+        'address'        => [
+            '@type'           => 'PostalAddress',
+            'addressCountry'  => 'RU',
+            'addressRegion'   => 'Москва',
+            'addressLocality' => 'пос. Вороновское',
+            'streetAddress'   => 'КП Лесные Поляны',
+        ],
+        'amenityFeature' => [
+            [
+                '@type' => 'LocationFeatureSpecification',
+                'name'  => 'Сауна',
+                'value' => true,
+            ],
+            [
+                '@type' => 'LocationFeatureSpecification',
+                'name'  => 'Водяной теплый пол',
+                'value' => true,
+            ],
+            [
+                '@type' => 'LocationFeatureSpecification',
+                'name'  => 'Панорамные окна',
+                'value' => true,
+            ],
+            [
+                '@type' => 'LocationFeatureSpecification',
+                'name'  => 'Безбарьерная среда',
+                'value' => true,
+            ],
+        ],
+    ],
+    // offers — свойство CreativeWork, поэтому допустимо для RealEstateListing (WebPage).
+    'offers'      => [
+        '@type'            => 'Offer',
+        'priceCurrency'    => 'RUB',
+        'availability'     => 'https://schema.org/InStock',
+        'businessFunction' => 'http://purl.org/goodrelations/v1#Sell',
+        'url'              => $siteUrl . '/#cta',
+        'seller'           => [
+            '@type'     => 'Organization',
+            'name'      => 'ОдноЭтажники.РФ',
+            'url'       => $siteUrl . '/',
+            'telephone' => '+7 985 096 10 86',
+        ],
+    ],
+];
+
 include 'header.php';
 ?>
 
@@ -401,28 +473,101 @@ include 'header.php';
             </div>
         </section>
 
-        <!-- CTA Section -->
-        <section class="cta-section" id="cta">
+        <!-- CTA Section: двойной захват заявок (экскурсия / смета / ипотека) -->
+        <section class="cta-section" id="cta" aria-labelledby="cta-title">
             <div class="container">
                 <div class="cta-content">
-                    <h2>Готовы начать ваш проект?</h2>
-                    <p>Свяжитесь с нами для бесплатной консультации. Наши специалисты помогут определить объем работ и сроки реализации.</p>
-                    
-                    <form class="contact-form-inline" id="ctaForm" action="send-email.php" method="POST">
+                    <h2 id="cta-title">Выберите формат знакомства с проектом</h2>
+                    <p>Экскурсия по готовому дому, смета на ваш участок или расчет ипотеки — выберите удобный вариант, и мы свяжемся с вами в течение рабочего дня.</p>
+
+                    <form class="cta-form" id="ctaForm" action="send-email.php" method="POST">
                         <div style="position:absolute;left:-9999px;" aria-hidden="true">
                             <input type="text" name="website" tabindex="-1" autocomplete="off">
                         </div>
                         <input type="hidden" name="form_ts" value="<?php echo time(); ?>">
-                        <div class="form-group">
-                            <input type="text" name="name" placeholder="Ваше имя" required>
+                        <input type="hidden" name="projectType" id="ctaProjectType" value="Экскурсия в готовый дом (Новая Москва)">
+
+                        <fieldset class="cta-intent">
+                            <legend class="cta-intent__legend">Формат знакомства с проектом</legend>
+
+                            <label class="intent-option">
+                                <input type="radio" name="intent" value="Экскурсия в готовый дом (Новая Москва)" checked>
+                                <span class="intent-option__text">Хочу приехать на экскурсию в готовый дом (Новая Москва)</span>
+                            </label>
+
+                            <label class="intent-option">
+                                <input type="radio" name="intent" value="Смета строительства на моем участке">
+                                <span class="intent-option__text">Хочу рассчитать смету строительства такого дома на моем участке</span>
+                            </label>
+
+                            <label class="intent-option">
+                                <input type="radio" name="intent" value="Ипотека от 6%">
+                                <span class="intent-option__text">Рассчитать покупку в ипотеку (от 6%)</span>
+                            </label>
+                        </fieldset>
+
+                        <div class="cta-form__fields">
+                            <div class="form-group">
+                                <label class="sr-only" for="ctaName">Ваше имя</label>
+                                <input type="text" id="ctaName" name="name" placeholder="Ваше имя" autocomplete="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="ctaPhone">Номер телефона</label>
+                                <input type="tel" id="ctaPhone" name="phone" placeholder="Номер телефона" autocomplete="tel" inputmode="tel" required>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <input type="tel" name="phone" placeholder="Номер телефона" required>
-                        </div>
-                        <button type="submit" class="btn-submit">Получить консультацию</button>
+
+                        <button type="submit" class="btn-submit cta-form__submit">Отправить заявку</button>
+                        <p class="cta-form__note">Нажимая «Отправить заявку», вы соглашаетесь на обработку персональных данных в соответствии с 152-ФЗ.</p>
                     </form>
                 </div>
             </div>
         </section>
+
+        <script>
+        // Выбранный формат дублируется в скрытое projectType: main.js сериализует всю форму
+        // и без синхронизации в заявку ушёл бы только первый (default) вариант.
+        (function () {
+            var form = document.getElementById('ctaForm');
+            if (!form) {
+                return;
+            }
+
+            var projectType = form.querySelector('input[name="projectType"]');
+            var intents = form.querySelectorAll('input[name="intent"]');
+
+            var syncIntent = function () {
+                var selected = form.querySelector('input[name="intent"]:checked');
+                if (!selected || !projectType) {
+                    return;
+                }
+
+                projectType.value = selected.value;
+
+                intents.forEach(function (radio) {
+                    var option = radio.closest('.intent-option');
+                    if (option) {
+                        option.classList.toggle('is-selected', radio.checked);
+                    }
+                });
+            };
+
+            intents.forEach(function (radio) {
+                radio.addEventListener('change', syncIntent);
+            });
+
+            // form.reset() в main.js возвращает radio к default — вернём и projectType.
+            form.addEventListener('reset', function () {
+                window.setTimeout(syncIntent, 0);
+            });
+
+            syncIntent();
+        })();
+        </script>
+
+        <!-- Микроразметка объекта для Google / Яндекс / AI-поисковиков -->
+        <script type="application/ld+json">
+<?php echo json_encode($houseSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT); ?>
+        </script>
 
 <?php include 'footer.php'; ?>
