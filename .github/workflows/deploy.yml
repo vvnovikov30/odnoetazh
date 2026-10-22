@@ -13,14 +13,13 @@ jobs:
       - name: Get latest code
         uses: actions/checkout@v4
 
-      - name: Copy files via SFTP
-        uses: garygrossgarten/github-action-scp@release
+      - name: Copy files via SCP
+        uses: appleboy/scp-action@v0.1.7
         with:
-          local: .
-          remote: /www/xn--80ahhialrcec8b1i.xn--p1ai/
           host: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 22
-          rmRemote: false
-          exclude: ".git,.git/*,.github,.github/*,.tools,.tools/*,app,app/*,components,components/*,content,content/*,posts,posts/*,node_modules,node_modules/*,.next,.next/*,*.bat,*.ps1,*.md,.clinerules,requests.*,package*.json,tsconfig.json"
+          source: "."
+          target: "/var/www/u2988221/data/www/xn--80ahhialrcec8b1i.xn--p1ai"
+          strip_components: 0
