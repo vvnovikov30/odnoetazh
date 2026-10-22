@@ -1,0 +1,27 @@
+# .gitattributes — что НЕ попадает на хостинг.
+#
+# Деплой (.github/workflows/deploy.yml) собирает дерево командой
+#   git archive HEAD
+# Поэтому export-ignore здесь — единственный надёжный фильтр: в вебрут уходят
+# только файлы сайта из индекса git, а локальные артефакты (дампы заявок,
+# слепки хостинга, кэши, node_modules) не выгружаются в принципе — их нет в git.
+
+# --- Инфраструктура, документация, инструменты разработчика ---
+/.gitattributes    export-ignore
+/.gitignore        export-ignore
+/.github/          export-ignore
+/.clinerules       export-ignore
+/tests/            export-ignore
+*.md               export-ignore
+*.bat              export-ignore
+*.ps1              export-ignore
+
+# --- Остатки Next.js-скаффолда: сайт статический на PHP, они не нужны ---
+/app/               export-ignore
+/components/        export-ignore
+/next.config.js     export-ignore
+/package.json       export-ignore
+/package-lock.json  export-ignore
+/postcss.config.mjs export-ignore
+/tailwind.config.ts export-ignore
+/tsconfig.json      export-ignore

@@ -13,32 +13,40 @@ jobs:
       - name: Get latest code
         uses: actions/checkout@v4
 
-      # На хостинг уходит только то, что нужно сайту: без VCS-метаданных,
-      # CI-конфигов, тестов, документации и локальных утилит разработчика.
+      # На хостинг уходит только то, что нужно сайту: дерево берётся из индекса git,
+      # поэтому локальные артефакты (дампы заявок, слепки хостинга, кэши, node_modules)
+      # физически не могут попасть в вебрут. Что именно не выгружается —
+      # задано в .gitattributes через export-ignore.
       - name: Build deploy tree
         run: |
           set -euo pipefail
+          rm -rf .deploy
           mkdir -p .deploy
-          rsync -a --delete \
-            --exclude '.git/' \
-            --exclude '.github/' \
-            --exclude '.next/' \
-            --exclude 'node_modules/' \
-            --exclude '.tools/' \
-            --exclude 'tests/' \
-            --exclude '*.md' \
-            --exclude '.clinerules' \
-            --exclude '*.bat' \
-            --exclude '*.ps1' \
-            ./ .deploy/
-          for forbidden in tests .git .github .tools .clinerules; do
+          git archive --format=tar HEAD | tar -x -C .deploy
+
+          status=0
+          for forbidden in tests .github .git .tools .clinerules requests.json requests.txt; do
             if [ -e ".deploy/$forbidden" ]; then
               echo "::error::Служебный объект '$forbidden' попал в .deploy — деплой остановлен"
-              exit 1
+              status=1
             fi
           done
+
+          stray=$(cd .deploy && find . \( -name '*.bat' -o -name '*.ps1' -o -name '*.md' -o -name '*.py' -o -name '*.ndjson' -o -name '.env' \))
+          if [ -n "$stray" ]; then
+            echo "::error::В .deploy попали служебные файлы: $stray"
+            status=1
+          fi
+
+          for required in index.php .htaccess robots.txt sitemap.xml; do
+            if [ ! -f ".deploy/$required" ]; then
+              echo "::error::Обязательный файл '$required' отсутствует в .deploy"
+              status=1
+            fi
+          done
+
           echo "Файлов к выгрузке: $(find .deploy -type f | wc -l)"
-          find .deploy -maxdepth 1 -type f | sort
+          exit $status
 
       - name: Copy files via SCP
         uses: appleboy/scp-action@v0.1.7
