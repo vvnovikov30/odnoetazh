@@ -47,3 +47,7 @@ node_modules/
 # local tooling (portable PHP и прочие локальные утилиты)
 /.tools/
 
+
+# python
+__pycache__/
+*.pyc

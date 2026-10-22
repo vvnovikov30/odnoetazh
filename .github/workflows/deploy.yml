@@ -13,6 +13,33 @@ jobs:
       - name: Get latest code
         uses: actions/checkout@v4
 
+      # На хостинг уходит только то, что нужно сайту: без VCS-метаданных,
+      # CI-конфигов, тестов, документации и локальных утилит разработчика.
+      - name: Build deploy tree
+        run: |
+          set -euo pipefail
+          mkdir -p .deploy
+          rsync -a --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude '.next/' \
+            --exclude 'node_modules/' \
+            --exclude '.tools/' \
+            --exclude 'tests/' \
+            --exclude '*.md' \
+            --exclude '.clinerules' \
+            --exclude '*.bat' \
+            --exclude '*.ps1' \
+            ./ .deploy/
+          for forbidden in tests .git .github .tools .clinerules; do
+            if [ -e ".deploy/$forbidden" ]; then
+              echo "::error::Служебный объект '$forbidden' попал в .deploy — деплой остановлен"
+              exit 1
+            fi
+          done
+          echo "Файлов к выгрузке: $(find .deploy -type f | wc -l)"
+          find .deploy -maxdepth 1 -type f | sort
+
       - name: Copy files via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -20,6 +47,6 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           port: 22
-          source: "."
+          source: ".deploy"
           target: "/var/www/u2988221/data/www/xn--80ahhialrcec8b1i.xn--p1ai"
-          strip_components: 0
+          strip_components: 1
