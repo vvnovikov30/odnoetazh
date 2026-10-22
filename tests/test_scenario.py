@@ -23,7 +23,8 @@
 
 Локально валидная заявка действительно сохраняется в <repo>/../data/requests/requests.ndjson
 (вне вебрута, как на хостинге) — так проверяется запись ПДн. Это тестовые данные.
-Счётчики rate-limit перед локальным прогоном сбрасываются, журнал заявок не изменяется.
+Счётчики rate-limit перед локальным прогоном сбрасываются, а тестовая запись после
+проверки откатывается: журнал заявок возвращается в исходное состояние.
 
 Код возврата: 0 — все проверки пройдены, 1 — есть ошибки (CI-friendly).
 """
@@ -435,6 +436,31 @@ def reset_local_rate_limit(data_dir: Path) -> int:
     return removed
 
 
+def read_ledger_bytes(path: Path) -> bytes | None:
+    """Сырое содержимое журнала заявок (None, если файла ещё нет)."""
+    try:
+        return path.read_bytes()
+    except OSError:
+        return None
+
+
+def restore_ledger(path: Path, original: bytes | None) -> str:
+    """Откатывает тестовую заявку: журнал возвращается к состоянию до прогона.
+
+    Тест не должен оставлять в журнале запись «Тест Тестович»: иначе каждый
+    прогон добавляет туда ПДн-мусор. Заодно следующий прогон снова проверяет
+    «запись добавлена» на чистом состоянии.
+    """
+    try:
+        if original is None:
+            path.unlink(missing_ok=True)
+        else:
+            path.write_bytes(original)
+    except OSError as exc:
+        return f"журнал не удалось вернуть в исходное состояние: {exc}"
+    return "тестовая запись удалена, журнал в исходном состоянии"
+
+
 def tcp_reachable(host: str, port: int, timeout: float = 1.0) -> bool:
     try:
         with socket.create_connection((host, port), timeout=timeout):
@@ -783,6 +809,7 @@ def scenario_form_api(reporter: Reporter, ctx: Context) -> None:
         "form_ts": str(int(time.time()) - 5),
     }
     before = snapshot_ledger(ledger)
+    original = read_ledger_bytes(ledger)  # для отката тестовой записи после проверки
     result = ctx.client.post("/send-email.php", payload)
     problems: list[str] = []
     if result.status != 200:
@@ -809,6 +836,9 @@ def scenario_form_api(reporter: Reporter, ctx: Context) -> None:
 
     reporter.row("4.4 валидная заявка сохранена", FAIL if problems else PASS, result.elapsed,
                  "; ".join(problems) or f"запись добавлена, строк в журнале: {after.lines}")
+
+    note = restore_ledger(ledger, original)
+    reporter.row("4.5 откат тестовой заявки", INFO, 0.0, note)
 
 
 # ===== СЦЕНАРИЙ 5: МЕДИА =====
