@@ -6,40 +6,21 @@ on:
       - main
 
 jobs:
-  web-deploy:
-    name: Sync files via FTP
+  deploy:
+    name: Sync via SFTP
     runs-on: ubuntu-latest
     steps:
       - name: Get latest code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
 
-      - name: Sync files
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      - name: Copy files via SFTP
+        uses: garygrossgarten/github-action-scp@release
         with:
-          server: ${{ secrets.FTP_SERVER }}
+          local: .
+          remote: /www/xn--80ahhialrcec8b1i.xn--p1ai/
+          host: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: /www/xn--80ahhialrcec8b1i.xn--p1ai/
-          protocol: ftps
-          port: 21
-          timeout: 60000
-          security: loose
-          exclude: |
-            **/.git*
-            **/.git*/**
-            **/.tools/**
-            app/**
-            components/**
-            content/**
-            posts/**
-            node_modules/**
-            .next/**
-            *.bat
-            *.ps1
-            *.md
-            .clinerules
-            requests.*
-            package*.json
-            tsconfig.json
+          port: 22
+          rmRemote: false
+          exclude: ".git,.git/*,.github,.github/*,.tools,.tools/*,app,app/*,components,components/*,content,content/*,posts,posts/*,node_modules,node_modules/*,.next,.next/*,*.bat,*.ps1,*.md,.clinerules,requests.*,package*.json,tsconfig.json"
