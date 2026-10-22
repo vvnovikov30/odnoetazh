@@ -18,7 +18,7 @@ jobs:
         with:
           host: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          key: ${{ secrets.SSH_KEY }}
           port: 22
           source: "."
           target: "/var/www/u2988221/data/www/xn--80ahhialrcec8b1i.xn--p1ai"
