@@ -59,7 +59,11 @@ include 'header.php';
                     <!-- Contact Form -->
                     <div class="contact-form-container">
                         <h2>Форма обратной связи</h2>
-                        <form class="contact-form" id="contactForm">
+                        <form class="contact-form" id="contactForm" action="send-email.php" method="POST">
+                            <div style="position:absolute;left:-9999px;" aria-hidden="true">
+                                <input type="text" name="website" tabindex="-1" autocomplete="off">
+                            </div>
+                            <input type="hidden" name="form_ts" value="<?php echo time(); ?>">
                             <div class="form-group">
                                 <label>Ваше имя *</label>
                                 <input type="text" name="name" required>

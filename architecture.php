@@ -120,7 +120,11 @@ include 'header.php';
                 <h2>Начните ваш проект прямо сейчас</h2>
                 <p>Свяжитесь с нашими архитекторами для бесплатной консультации. Обсудим ваши идеи, проведем анализ участка, предложим варианты решений.</p>
                 
-                <form class="contact-form" id="architectureForm">
+                <form class="contact-form" id="architectureForm" action="send-email.php" method="POST">
+                    <div style="position:absolute;left:-9999px;" aria-hidden="true">
+                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                    </div>
+                    <input type="hidden" name="form_ts" value="<?php echo time(); ?>">
                     <div class="form-group">
                         <input type="text" name="name" placeholder="Ваше имя" required>
                     </div>

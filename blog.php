@@ -65,7 +65,12 @@ include 'header.php';
                             <!-- Комментарии -->
                             <div class="article-comments">
                                 <h3>Комментарии</h3>
-                                <form class="comment-form">
+                                <form class="comment-form" action="send-email.php" method="POST">
+                                    <input type="hidden" name="subject" value="comment">
+                                    <div style="position:absolute;left:-9999px;" aria-hidden="true">
+                                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                                    </div>
+                                    <input type="hidden" name="form_ts" value="<?php echo time(); ?>">
                                     <div class="form-group">
                                         <input type="text" name="name" placeholder="Ваше имя" required>
                                     </div>
@@ -109,7 +114,12 @@ include 'header.php';
                             <!-- Комментарии -->
                             <div class="article-comments">
                                 <h3>Комментарии</h3>
-                                <form class="comment-form">
+                                <form class="comment-form" action="send-email.php" method="POST">
+                                    <input type="hidden" name="subject" value="comment">
+                                    <div style="position:absolute;left:-9999px;" aria-hidden="true">
+                                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                                    </div>
+                                    <input type="hidden" name="form_ts" value="<?php echo time(); ?>">
                                     <div class="form-group">
                                         <input type="text" name="name" placeholder="Ваше имя" required>
                                     </div>
@@ -150,7 +160,12 @@ include 'header.php';
                             <!-- Комментарии -->
                             <div class="article-comments">
                                 <h3>Комментарии</h3>
-                                <form class="comment-form">
+                                <form class="comment-form" action="send-email.php" method="POST">
+                                    <input type="hidden" name="subject" value="comment">
+                                    <div style="position:absolute;left:-9999px;" aria-hidden="true">
+                                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                                    </div>
+                                    <input type="hidden" name="form_ts" value="<?php echo time(); ?>">
                                     <div class="form-group">
                                         <input type="text" name="name" placeholder="Ваше имя" required>
                                     </div>
@@ -188,7 +203,12 @@ include 'header.php';
                             <!-- Комментарии -->
                             <div class="article-comments">
                                 <h3>Комментарии</h3>
-                                <form class="comment-form">
+                                <form class="comment-form" action="send-email.php" method="POST">
+                                    <input type="hidden" name="subject" value="comment">
+                                    <div style="position:absolute;left:-9999px;" aria-hidden="true">
+                                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                                    </div>
+                                    <input type="hidden" name="form_ts" value="<?php echo time(); ?>">
                                     <div class="form-group">
                                         <input type="text" name="name" placeholder="Ваше имя" required>
                                     </div>

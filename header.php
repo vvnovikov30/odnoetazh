@@ -32,7 +32,11 @@ if (!isset($page_title)) {
     <link rel="manifest" href="site.webmanifest">
     
     <!-- link rel="stylesheet" href="style.css" -->
-    <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="style.css?v=<?php echo filemtime(__DIR__ . '/style.css'); ?>">
+
+    <?php if (!empty($page_description)): ?>
+    <meta name="description" content="<?php echo htmlspecialchars($page_description, ENT_QUOTES, 'UTF-8'); ?>">
+    <?php endif; ?>
 
     <title><?php echo $page_title; ?></title>
 </head>
