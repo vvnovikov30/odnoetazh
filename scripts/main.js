@@ -13,36 +13,84 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // ===== 2. Обработка всех форм на сайте =====
+    // ===== 2. Обработка форм заявок =====
     document.querySelectorAll('form').forEach(form => {
+        // Комментарии обрабатываются отдельно: у них нет телефона
+        if (form.classList.contains('comment-form')) {
+            return;
+        }
+
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
             // Собираем данные формы
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
+            const needsPhone = this.querySelector('input[name="phone"]') !== null;
             
             // Валидация
-            if (!data.name || !data.phone) {
+            if (!data.name || (needsPhone && !data.phone)) {
                 alert('Пожалуйста, заполните обязательные поля');
                 return;
             }
             
             // Отправляем на сервер
-            fetch('send-email.php', {
+            fetch(this.getAttribute('action') || 'send-email.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: new URLSearchParams(data)
             })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    alert('Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.');
+            .then(response => response.json()
+                .catch(() => ({}))
+                .then(result => ({ ok: response.ok, status: response.status, result })))
+            .then(({ ok, status, result }) => {
+                if (ok && result.success) {
+                    alert(result.message || 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.');
+                    this.reset();
+                } else if (status === 429) {
+                    alert(result.message || 'Слишком много заявок. Попробуйте позже.');
+                } else {
+                    alert(result.message || 'Ошибка при отправке. Попробуйте позже.');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Ошибка подключения. Попробуйте позже.');
+            });
+        });
+    });
+    
+    // ===== 2.5 Обработка комментариев =====
+    document.querySelectorAll('.comment-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            if (!data.name || !data.message) {
+                alert('Пожалуйста, заполните все поля');
+                return;
+            }
+            
+            fetch(this.getAttribute('action') || 'send-email.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams(data)
+            })
+            .then(response => response.json()
+                .catch(() => ({}))
+                .then(result => ({ ok: response.ok, result })))
+            .then(({ ok, result }) => {
+                if (ok && result.success) {
+                    alert('Спасибо за комментарий! Он будет опубликован после проверки модератора.');
                     this.reset();
                 } else {
-                    alert('Ошибка при отправке. Попробуйте позже.');
+                    alert(result.message || 'Не удалось отправить комментарий. Попробуйте позже.');
                 }
             })
             .catch(error => {

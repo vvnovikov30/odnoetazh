@@ -109,7 +109,11 @@ include 'header.php';
                 <h2>Готовы начать строительство?</h2>
                 <p>Позвоните нам или заполните форму для получения бесплатной консультации. Обсудим объем работ, сроки и стоимость.</p>
                 
-                <form class="contact-form" id="constructionForm">
+                <form class="contact-form" id="constructionForm" action="send-email.php" method="POST">
+                    <div style="position:absolute;left:-9999px;" aria-hidden="true">
+                        <input type="text" name="website" tabindex="-1" autocomplete="off">
+                    </div>
+                    <input type="hidden" name="form_ts" value="<?php echo time(); ?>">
                     <div class="form-group">
                         <input type="text" name="name" placeholder="Ваше имя" required>
                     </div>

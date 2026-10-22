@@ -1,0 +1,36 @@
+# .htaccess — ОдноЭтажники.РФ
+# Синтаксис рассчитан на Apache 2.2 И Apache 2.4 (Reg.ru),
+# чтобы несовпадение версии не приводило к 500 Internal Server Error.
+
+# Запрет листинга каталогов
+Options -Indexes
+
+# Файлы с персональными данными, логами, бэкапами и архивами — не отдавать никогда.
+# Исключения: robots.txt (нужен поисковикам) — проверяется негативным lookahead.
+<FilesMatch "^(?!robots\.txt$).+\.(json|txt|md|log|bak|zip|sql|ndjson)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Мёртвые/служебные обработчики и дубли страниц — блок даже при прямом обращении по URL
+<FilesMatch "^(send-email_|send-email2|test-mail|index1201|blog_|blog_comments)\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Базовые security-заголовки
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>

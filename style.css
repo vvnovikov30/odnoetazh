@@ -836,12 +836,12 @@ a:hover {
     gap: var(--space-20);
 }
 
-/* ===== ЛОГОТИП ===== */
+/* ===== ЛОГОТИП (разделённый: картинка + текст) ===== */
 
 .logo {
     display: flex;
     align-items: center;
-    gap: var(--space-16);
+    gap: var(--space-12);
 }
 
 .logo-link {
@@ -852,14 +852,122 @@ a:hover {
 }
 
 .logo-link:hover {
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
+.logo-link:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: 2px;
+    border-radius: var(--radius-base);
+}
+
+/* Картинка логотипа */
 .logo-image {
-    max-width: 220px;
+    max-width: 80px;
     height: auto;
     display: block;
     width: 100%;
+    flex-shrink: 0;
+}
+
+/* Текстовая часть логотипа */
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+}
+
+.logo-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+    color: var(--color-text);
+    margin: 0;
+    white-space: nowrap;
+}
+
+.logo-tagline {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    margin: 0;
+    font-weight: var(--font-weight-normal);
+    white-space: nowrap;
+}
+
+/* Адаптация под планшеты (768px - 1024px) */
+@media (max-width: 1024px) {
+    .logo-image {
+        max-width: 70px;
+    }
+    
+    .logo-title {
+        font-size: var(--font-size-md);
+    }
+    
+    .logo-tagline {
+        font-size: var(--font-size-xs);
+    }
+}
+
+/* Адаптация под большие телефоны (480px - 767px) */
+@media (max-width: 767px) {
+    .logo {
+        gap: var(--space-8);
+    }
+    
+    .logo-image {
+        max-width: 60px;
+    }
+    
+    .logo-title {
+        font-size: var(--font-size-base);
+    }
+    
+    .logo-tagline {
+        font-size: var(--font-size-xs);
+        opacity: 0.8;
+    }
+}
+
+/* Адаптация под маленькие телефоны (до 480px) */
+@media (max-width: 480px) {
+    .logo {
+        gap: var(--space-6);
+    }
+    
+    .logo-image {
+        max-width: 50px;
+    }
+    
+    .logo-title {
+        font-size: var(--font-size-sm);
+    }
+    
+    .logo-tagline {
+        font-size: 10px;
+        opacity: 0.7;
+    }
+}
+
+/* Адаптация под очень маленькие телефоны (до 360px) */
+@media (max-width: 360px) {
+    .logo {
+        gap: var(--space-4);
+    }
+    
+    .logo-image {
+        max-width: 45px;
+    }
+    
+    .logo-title {
+        font-size: 12px;
+    }
+    
+    .logo-tagline {
+        font-size: 9px;
+        display: none;
+    }
 }
 
 /* ===== НАВИГАЦИЯ ===== */
@@ -1676,4 +1784,64 @@ a:hover {
         padding: var(--space-10) var(--space-12);
         font-size: var(--font-size-sm);
     }
+}
+/* ===== КОММЕНТАРИИ К СТАТЬЯМ ===== */
+
+.article-comments {
+    margin-top: var(--space-32);
+    padding-top: var(--space-24);
+    border-top: 1px solid var(--color-border);
+}
+
+.article-comments h3 {
+    margin-bottom: var(--space-16);
+    color: var(--color-primary);
+}
+
+.comment-form {
+    display: grid;
+    gap: var(--space-12);
+}
+
+.comment-form .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-form input,
+.comment-form textarea {
+    padding: var(--space-12);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    transition: border-color 0.3s ease;
+}
+
+.comment-form input:focus,
+.comment-form textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(255, 149, 0, 0.1);
+}
+
+.comment-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.comment-form button {
+    padding: var(--space-10) var(--space-20);
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.comment-form button:hover {
+    background-color: var(--color-primary-dark);
 }
