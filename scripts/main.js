@@ -171,6 +171,64 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
+    // ===== 8. Шоурум: переключение табов фотогалереи =====
+    const showroom = document.querySelector('.showroom');
+    if (showroom) {
+        const showroomTabs = Array.from(showroom.querySelectorAll('[data-tab]'));
+        const showroomPanels = Array.from(showroom.querySelectorAll('[data-tab-panel]'));
+
+        if (showroomTabs.length && showroomPanels.length) {
+            showroom.classList.add('showroom--enhanced');
+
+            const activateShowroomTab = function(name, moveFocus) {
+                showroomTabs.forEach(tab => {
+                    const isActive = tab.dataset.tab === name;
+                    tab.classList.toggle('is-active', isActive);
+                    tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+                    tab.tabIndex = isActive ? 0 : -1;
+
+                    if (isActive && moveFocus) {
+                        tab.focus();
+                    }
+                });
+
+                showroomPanels.forEach(panel => {
+                    const isActive = panel.dataset.tabPanel === name;
+                    panel.classList.toggle('is-active', isActive);
+                    panel.hidden = !isActive;
+                });
+            };
+
+            showroomTabs.forEach((tab, index) => {
+                tab.addEventListener('click', function() {
+                    activateShowroomTab(tab.dataset.tab, false);
+                });
+
+                tab.addEventListener('keydown', function(event) {
+                    let nextIndex = null;
+
+                    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+                        nextIndex = (index + 1) % showroomTabs.length;
+                    } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
+                        nextIndex = (index - 1 + showroomTabs.length) % showroomTabs.length;
+                    } else if (event.key === 'Home') {
+                        nextIndex = 0;
+                    } else if (event.key === 'End') {
+                        nextIndex = showroomTabs.length - 1;
+                    }
+
+                    if (nextIndex !== null) {
+                        event.preventDefault();
+                        activateShowroomTab(showroomTabs[nextIndex].dataset.tab, true);
+                    }
+                });
+            });
+
+            const initialShowroomTab = showroomTabs.find(tab => tab.getAttribute('aria-selected') === 'true') || showroomTabs[0];
+            activateShowroomTab(initialShowroomTab.dataset.tab, false);
+        }
+    }
+
     console.log('✅ ОдноЭтажники.РФ JavaScript инициализирован');
 });
 

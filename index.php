@@ -39,6 +39,232 @@ include 'header.php';
             </div>
         </section>
 
+        <!-- Showroom: интерактивная галерея флагманского дома 90.8 м² -->
+        <section class="showroom" id="showroom" aria-labelledby="showroom-title">
+            <div class="container">
+                <div class="showroom__head">
+                    <p class="showroom__eyebrow">Живой шоурум в Новой Москве</p>
+                    <h2 id="showroom-title">Флагманский объект: Шоурум «Лесные Поляны»</h2>
+                    <p class="showroom__lead">Оцените качество материалов, эргономику и инженерию на реальном объекте</p>
+                </div>
+
+                <div class="showroom-tabs" role="tablist" aria-label="Разделы фотогалереи шоурума">
+                    <button type="button" class="showroom-tab is-active" id="showroom-tab-exterior" role="tab" aria-selected="true" aria-controls="showroom-panel-exterior" data-tab="exterior">Архитектура и фасад</button>
+                    <button type="button" class="showroom-tab" id="showroom-tab-plan" role="tab" aria-selected="false" aria-controls="showroom-panel-plan" data-tab="plan" tabindex="-1">Планировка 90.8 м²</button>
+                    <button type="button" class="showroom-tab" id="showroom-tab-interior" role="tab" aria-selected="false" aria-controls="showroom-panel-interior" data-tab="interior" tabindex="-1">Интерьер и кухня 3.3 м</button>
+                    <button type="button" class="showroom-tab" id="showroom-tab-spa" role="tab" aria-selected="false" aria-controls="showroom-panel-spa" data-tab="spa" tabindex="-1">SPA-зона и сауна</button>
+                    <button type="button" class="showroom-tab" id="showroom-tab-landscape" role="tab" aria-selected="false" aria-controls="showroom-panel-landscape" data-tab="landscape" tabindex="-1">Участок 3 сотки</button>
+                </div>
+
+                <div class="showroom-panels">
+                    <div class="showroom-panel is-active" id="showroom-panel-exterior" role="tabpanel" aria-labelledby="showroom-tab-exterior" data-tab-panel="exterior" tabindex="0">
+                        <div class="showroom-gallery showroom-gallery--facade">
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/exterior/lesnye-polyany-exterior-modern-japandi-chalet-noki-overhangs-01.jpg"
+                                     alt="Фасад флагманского одноэтажного дома 90.8 м² в стиле джапанди с вечерней подсветкой и гравийным двором — шоурум «Лесные Поляны» в Новой Москве"
+                                     width="2560" height="1920" loading="lazy" decoding="async">
+                                <figcaption>Вечерняя архитектурная подсветка фасада</figcaption>
+                            </figure>
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/exterior/lesnye-polyany-exterior-modern-japandi-chalet-noki-overhangs-02.jpg"
+                                     alt="Одноэтажный дом 90.8 м² с графитовым фасадом и тёплой деревянной входной группой, вид с улицы посёлка «Лесные Поляны» в Новой Москве"
+                                     width="1962" height="1134" loading="lazy" decoding="async">
+                                <figcaption>Входная группа: дерево и графитовый планкен</figcaption>
+                            </figure>
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/exterior/lesnye-polyany-exterior-modern-japandi-chalet-noki-overhangs-03.jpg"
+                                     alt="Зимний фасад дома-шоурума «Лесные Поляны» 90.8 м²: свес кровли 1 м защищает древесину и входную террасу от осадков в Новой Москве"
+                                     width="960" height="1280" loading="lazy" decoding="async">
+                                <figcaption>Свесы кровли 1 м защищают фасад зимой</figcaption>
+                            </figure>
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/exterior/lesnye-polyany-exterior-modern-japandi-chalet-noki-overhangs-04.jpg"
+                                     alt="Входная терраса и навес дома 90.8 м² зимой — шоурум «Лесные Поляны» в Новой Москве, фасад из планкена с вентилируемым зазором"
+                                     width="1280" height="960" loading="lazy" decoding="async">
+                                <figcaption>Терраса и навес: сухой вход круглый год</figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <div class="showroom-panel" id="showroom-panel-plan" role="tabpanel" aria-labelledby="showroom-tab-plan" data-tab-panel="plan" tabindex="0">
+                        <div class="showroom-plan">
+                            <figure class="showroom-figure showroom-figure--plan">
+                                <img src="images/projects/lesnye-polyany/plan/lesnye-polyany-plan-energy-efficient-floor-plan-ushp-01.jpg"
+                                     alt="Планировка одноэтажного дома 90.8 м²: кухня-гостиная, спальни, SPA-зона и технические помещения — шоурум «Лесные Поляны» в Новой Москве"
+                                     width="1851" height="2207" loading="lazy" decoding="async">
+                                <figcaption>Планировка 90.8 м²: единый уровень пола, кухня-гостиная и SPA-зона</figcaption>
+                            </figure>
+                            <dl class="showroom-plan__specs">
+                                <div class="showroom-plan__row">
+                                    <dt>Общая площадь</dt>
+                                    <dd>90.8 м²</dd>
+                                </div>
+                                <div class="showroom-plan__row">
+                                    <dt>Потолки</dt>
+                                    <dd>до 3.3 м, включая кухню</dd>
+                                </div>
+                                <div class="showroom-plan__row">
+                                    <dt>Фундамент</dt>
+                                    <dd>ж/б плита УШП</dd>
+                                </div>
+                                <div class="showroom-plan__row">
+                                    <dt>Отопление</dt>
+                                    <dd>водяной тёплый пол по всей площади</dd>
+                                </div>
+                                <div class="showroom-plan__row">
+                                    <dt>Стены и перекрытие</dt>
+                                    <dd>каркас 200 мм / 250 мм, базальтовая вата</dd>
+                                </div>
+                                <div class="showroom-plan__row">
+                                    <dt>Пороги</dt>
+                                    <dd>отсутствуют, единый уровень пола</dd>
+                                </div>
+                                <div class="showroom-plan__row">
+                                    <dt>Окна</dt>
+                                    <dd>во всех комнатах, включая санузлы, гардеробную и тамбур</dd>
+                                </div>
+                                <div class="showroom-plan__row">
+                                    <dt>SPA-зона</dt>
+                                    <dd>парная и душевая walk-in</dd>
+                                </div>
+                                <div class="showroom-plan__row">
+                                    <dt>Участок</dt>
+                                    <dd>3 сотки</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <div class="showroom-panel" id="showroom-panel-interior" role="tabpanel" aria-labelledby="showroom-tab-interior" data-tab-panel="interior" tabindex="0">
+                        <div class="showroom-gallery showroom-gallery--portrait">
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/kitchen/lesnye-polyany-kitchen-modern-kitchen-high-ceilings-3m-01.jpg"
+                                     alt="Кухня-гостиная с потолком 3.3 м и панорамным остеклением на террасу — шоурум «Лесные Поляны» 90.8 м² в Новой Москве"
+                                     width="1920" height="2560" loading="lazy" decoding="async">
+                                <figcaption>Кухня-гостиная: потолок 3.3 м и выход на террасу</figcaption>
+                            </figure>
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/interior/lesnye-polyany-interior-quiet-luxury-interior-design-minimalism-01.jpg"
+                                     alt="Гостиная с белыми стенами, подсветкой потолка и керамогранитом под мрамор в доме 90.8 м² — шоурум «Лесные Поляны» в Новой Москве"
+                                     width="1920" height="2560" loading="lazy" decoding="async">
+                                <figcaption>Гостиная: светлая отделка и скрытая подсветка</figcaption>
+                            </figure>
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/interior/lesnye-polyany-interior-quiet-luxury-interior-design-minimalism-02.jpg"
+                                     alt="Проход из гостиной в санузел: единый уровень пола без порогов и скрытые двери в доме 90.8 м², шоурум в Новой Москве"
+                                     width="1920" height="2560" loading="lazy" decoding="async">
+                                <figcaption>Безбарьерный проход в санузел без порогов</figcaption>
+                            </figure>
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/interior/lesnye-polyany-interior-quiet-luxury-interior-design-minimalism-03.jpg"
+                                     alt="Просторная гостиная с несколькими окнами и дверями в спальни — интерьер дома 90.8 м² «Лесные Поляны» в Новой Москве"
+                                     width="1920" height="2560" loading="lazy" decoding="async">
+                                <figcaption>Гостиная с окнами и дверями в спальни</figcaption>
+                            </figure>
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/interior/lesnye-polyany-interior-quiet-luxury-interior-design-minimalism-04.jpg"
+                                     alt="Светлая комната с окном и выходом на террасу: естественный свет и высокий потолок в доме 90.8 м² в Новой Москве"
+                                     width="1920" height="2560" loading="lazy" decoding="async">
+                                <figcaption>Естественный свет и выход на террасу</figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <div class="showroom-panel" id="showroom-panel-spa" role="tabpanel" aria-labelledby="showroom-tab-spa" data-tab-panel="spa" tabindex="0">
+                        <div class="showroom-gallery showroom-gallery--portrait">
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/bathroom/lesnye-polyany-bathroom-barrier-free-bathroom-walk-in-shower-01.jpg"
+                                     alt="Парная с деревянными полками, мозаичным полом и душевым смесителем — SPA-зона дома 90.8 м² «Лесные Поляны» в Новой Москве"
+                                     width="1920" height="2560" loading="lazy" decoding="async">
+                                <figcaption>Парная: деревянные полки и мозаичный пол</figcaption>
+                            </figure>
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/bathroom/lesnye-polyany-bathroom-barrier-free-bathroom-walk-in-shower-02.jpg"
+                                     alt="Парная с окном для естественного света и вентиляции, деревянные полки и каменка — шоурум «Лесные Поляны» 90.8 м² в Новой Москве"
+                                     width="960" height="1280" loading="lazy" decoding="async">
+                                <figcaption>Окно в парной: свет и естественная вентиляция</figcaption>
+                            </figure>
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/bathroom/lesnye-polyany-bathroom-barrier-free-bathroom-walk-in-shower-08.jpg"
+                                     alt="Душевая walk-in с трапом в уровне пола и влагостойкой отделкой — SPA-зона дома 90.8 м² в Новой Москве"
+                                     width="1920" height="2560" loading="lazy" decoding="async">
+                                <figcaption>Душевая walk-in: трап в уровне пола</figcaption>
+                            </figure>
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/bathroom/lesnye-polyany-bathroom-barrier-free-bathroom-walk-in-shower-05.jpg"
+                                     alt="Санузел с душевой walk-in, трапом и мозаичной плиткой без порогов — шоурум «Лесные Поляны» в Новой Москве"
+                                     width="960" height="1280" loading="lazy" decoding="async">
+                                <figcaption>Санузел без порогов: безопасный вход</figcaption>
+                            </figure>
+                        </div>
+                    </div>
+
+                    <div class="showroom-panel" id="showroom-panel-landscape" role="tabpanel" aria-labelledby="showroom-tab-landscape" data-tab-panel="landscape" tabindex="0">
+                        <div class="showroom-gallery showroom-gallery--landscape">
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/landscape/lesnye-polyany-landscape-minimalist-garden-design-forest-lot-01.jpg"
+                                     alt="Благоустроенный участок 3 сотки с газоном и гравийными дорожками вокруг дома 90.8 м² — шоурум «Лесные Поляны» в Новой Москве"
+                                     width="2560" height="1920" loading="lazy" decoding="async">
+                                <figcaption>Гравийный двор и газон вокруг дома</figcaption>
+                            </figure>
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/landscape/lesnye-polyany-landscape-minimalist-garden-design-forest-lot-02.jpg"
+                                     alt="Ландшафт участка 3 сотки: минималистичный сад и лесные посадки у дома-шоурума «Лесные Поляны» в Новой Москве"
+                                     width="573" height="725" loading="lazy" decoding="async">
+                                <figcaption>Минималистичный сад без лишних построек</figcaption>
+                            </figure>
+                            <figure class="showroom-figure">
+                                <img src="images/projects/lesnye-polyany/landscape/lesnye-polyany-landscape-minimalist-garden-design-forest-lot-03.jpg"
+                                     alt="Прогулочная зона и озеленение на участке 3 сотки — флагманский дом 90.8 м² «Лесные Поляны» в Новой Москве"
+                                     width="1625" height="2019" loading="lazy" decoding="async">
+                                <figcaption>Лесные посадки по периметру участка</figcaption>
+                            </figure>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Инженерные стандарты флагманского дома -->
+        <section class="engineering" id="engineering" aria-labelledby="engineering-title">
+            <div class="container">
+                <div class="engineering__head">
+                    <h2 id="engineering-title">Инженерные стандарты дома <span>(Почему здесь тепло и комфортно)</span></h2>
+                    <p class="engineering__lead">Четыре решения, которые ощущаются каждый день: от плиты с подогревом до окна в парной.</p>
+                </div>
+
+                <div class="engineering-grid">
+                    <article class="engineering-card">
+                        <span class="engineering-card__index" aria-hidden="true">01</span>
+                        <h3>Тёплый фундамент</h3>
+                        <p>Железобетонная плита с водяным тёплым полом по всей площади: нет холодных зон и радиаторов.</p>
+                        <p class="engineering-card__tag">УШП · тёплый пол · без радиаторов</p>
+                    </article>
+
+                    <article class="engineering-card">
+                        <span class="engineering-card__index" aria-hidden="true">02</span>
+                        <h3>Двойное утепление</h3>
+                        <p>Каркас стен 200 мм и перекрытие 250 мм с базальтовой ватой без формальдегида: дом держит тепло даже в морозы Подмосковья.</p>
+                        <p class="engineering-card__tag">200 мм стены · 250 мм перекрытие · базальтовая вата</p>
+                    </article>
+
+                    <article class="engineering-card">
+                        <span class="engineering-card__index" aria-hidden="true">03</span>
+                        <h3>Безбарьерная среда</h3>
+                        <p>Никаких порогов: единый уровень пола во всех помещениях и трапы walk-in в душевых.</p>
+                        <p class="engineering-card__tag">0 порогов · единый уровень · трапы walk-in</p>
+                    </article>
+
+                    <article class="engineering-card">
+                        <span class="engineering-card__index" aria-hidden="true">04</span>
+                        <h3>Естественный свет</h3>
+                        <p>Окна во всех комнатах, включая санузлы, гардеробную и тамбур. Потолки до 3.3 м.</p>
+                        <p class="engineering-card__tag">окна в каждой комнате · потолки 3.3 м</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
         <!-- Services Overview -->
         <section class="services-overview">
             <div class="container">
