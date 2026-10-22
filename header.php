@@ -5,10 +5,10 @@
 $company = [
     'name' => 'ОдноЭтажники.РФ',
     'phone' => '+7 985 096 10 86',
-    'email' => 'info@odnoetagniki.ru',
+    'email' => 'vvnovikov30@yandex.ru',
     'address' => 'Москва, Боровское ш., 2',
     'telegram' => 'https://t.me/CodeofEnvironment',
-    'tagline' => 'Архитектура, проектирование, строительство'
+    'tagline' => 'Дома для жизни'
 ];
 
 // Страница по умолчанию если не указана
@@ -31,7 +31,9 @@ if (!isset($page_title)) {
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="manifest" href="site.webmanifest">
     
-    <link rel="stylesheet" href="style.css">
+    <!-- link rel="stylesheet" href="style.css" -->
+    <link rel="stylesheet" href="style.css?v=<?php echo time(); ?>">
+
     <title><?php echo $page_title; ?></title>
 </head>
 <body>
@@ -39,9 +41,13 @@ if (!isset($page_title)) {
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <div class="logo">
+             <div class="logo">
                     <a href="index.php" class="logo-link">
-                        <img src="logodom.jpg" alt="<?php echo $company['name']; ?>" class="logo-image">
+                        <img src="logo2.jpg" alt="Логотип" class="logo-image">
+                        <div class="logo-text">
+                            <h2 class="logo-title"><?php echo $company['name']; ?></h2>
+                            <p class="logo-tagline"><?php echo $company['tagline']; ?></p>
+                        </div>
                     </a>
                 </div>
                 <nav class="nav">

@@ -36,3 +36,10 @@ next-env.d.ts
 
 
 
+*.zip
+requests.txt
+requests.json
+.DS_Store
+Thumbs.db
+node_modules/
+.next/
