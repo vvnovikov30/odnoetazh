@@ -56,18 +56,18 @@ netstat -ano -p TCP | findstr /C:":%SNAPSHOT_PORT% " >nul && (
 
 rem --- 4. Запуск двух встроенных PHP-серверов в отдельных окнах консоли -------
 echo [i] Запускаю сервер 1: репозиторий "%REPO_DIR%" на порту %REPO_PORT%
-start "PHP %REPO_PORT% - odnoetazh (repo)" /D "%REPO_DIR%" "%PHP_EXE%" -S localhost:%REPO_PORT% -t "%REPO_DIR%"
+start "PHP %REPO_PORT% - odnoetazh (repo)" /D "%REPO_DIR%" "%PHP_EXE%" -S 127.0.0.1:%REPO_PORT% -t "%REPO_DIR%"
 
 echo [i] Запускаю сервер 2: слепок "%SNAPSHOT_DIR%" на порту %SNAPSHOT_PORT%
-start "PHP %SNAPSHOT_PORT% - snapshot (hosting)" /D "%SNAPSHOT_DIR%" "%PHP_EXE%" -S localhost:%SNAPSHOT_PORT% -t "%SNAPSHOT_DIR%"
+start "PHP %SNAPSHOT_PORT% - snapshot (hosting)" /D "%SNAPSHOT_DIR%" "%PHP_EXE%" -S 127.0.0.1:%SNAPSHOT_PORT% -t "%SNAPSHOT_DIR%"
 
 rem --- 5. Информация для пользователя ----------------------------------------
 echo.
 echo ==========================================================
 echo   Локальный предпросмотр двух версий сайта запущен
 echo ==========================================================
-echo   Версия из репозитория : http://localhost:%REPO_PORT%
-echo   Слепок с хостинга    : http://localhost:%SNAPSHOT_PORT%
+echo   Версия из репозитория : http://127.0.0.1:%REPO_PORT%
+echo   Слепок с хостинга    : http://127.0.0.1:%SNAPSHOT_PORT%
 echo ----------------------------------------------------------
 echo   Каждый сервер работает в своём окне консоли:
 echo     "PHP %REPO_PORT% - odnoetazh (repo)"
