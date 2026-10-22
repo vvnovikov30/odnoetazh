@@ -7,16 +7,34 @@ $page_description = 'ОдноЭтажники.РФ - архитектура, п�
 include 'header.php';
 ?>
 
-        <!-- Hero Section -->
-        <section class="hero">
+        <!-- Hero Section: живой шоурум технологий -->
+        <section class="hero hero--showroom">
             <div class="container">
                 <div class="hero-content">
-                    <h1>Ваш проект воплотится в жизнь вместе с <?php echo $company['name']; ?></h1>
-                    <p>Полный цикл услуг: от архитектурного проектирования до завершения строительства. 15+ лет опыта, 200+ реализованных проектов.</p>
-                    <button class="cta-btn-large">Получить бесплатную консультацию</button>
+                    <ul class="hero-badge">
+                        <li>Живой шоурум технологий</li>
+                        <li>Новая Москва</li>
+                        <li>Ипотека от 6%</li>
+                    </ul>
+                    <h1>Энергоэффективные одноэтажные дома под ключ в Москве и Подмосковье</h1>
+                    <p class="hero-lead">Проектируем и возводим дома с гарантией. Приглашаем на тест-драйв в наш флагманский дом-шоурум 90.8 м² с баней в Новой Москве</p>
+                    <div class="hero-actions">
+                        <a href="#cta" class="hero-btn hero-btn--primary">Записаться на экскурсию в дом</a>
+                        <a href="#projects" class="hero-btn hero-btn--secondary">Построить такой дом на моем участке</a>
+                    </div>
                 </div>
                 <div class="hero-image">
-                    <div style="background: linear-gradient(135deg, #FF9500 0%, #FFB84D 100%); height: 400px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">🏗️</div>
+                    <figure class="hero-showcase">
+                        <span class="hero-showcase__status">Готов к проживанию</span>
+                        <img class="hero-showcase__image"
+                             src="images/projects/lesnye-polyany/exterior/lesnye-polyany-exterior-modern-japandi-chalet-noki-overhangs-01.jpg"
+                             alt="Фасад флагманского одноэтажного дома 90.8 м² в стиле джапанди, живой шоурум ОдноЭтажники.РФ в Новой Москве"
+                             width="2560" height="1920" loading="eager" fetchpriority="high" decoding="async">
+                        <figcaption class="hero-showcase__caption">
+                            <strong>Дом «Лесные Поляны»</strong>
+                            <span>90.8 м² • джапанди • с баней • Новая Москва</span>
+                        </figcaption>
+                    </figure>
                 </div>
             </div>
         </section>
@@ -92,7 +110,7 @@ include 'header.php';
         </section>
 
         <!-- Portfolio Preview -->
-        <section class="portfolio-preview">
+        <section class="portfolio-preview" id="projects">
             <div class="container">
                 <h2>Избранные проекты</h2>
                 <p class="section-subtitle">Примеры успешно реализованных объектов</p>
@@ -158,7 +176,7 @@ include 'header.php';
         </section>
 
         <!-- CTA Section -->
-        <section class="cta-section">
+        <section class="cta-section" id="cta">
             <div class="container">
                 <div class="cta-content">
                     <h2>Готовы начать ваш проект?</h2>
