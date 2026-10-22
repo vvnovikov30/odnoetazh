@@ -1,0 +1,35 @@
+name: Deploy to Hosting
+
+on:
+  push:
+    branches:
+      - main  # Срабатывает при каждом git push в ветку main
+
+jobs:
+  web-deploy:
+    name: Sync files via FTP
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get latest code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: /www/xn--80ahhialrcec8b1i.xn--p1ai/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.tools/**
+            *.bat
+            *.ps1
+            requests.*
+            .gitignore
+            README.md
+            package*.json
+            tsconfig.json
