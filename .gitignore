@@ -43,3 +43,7 @@ requests.json
 Thumbs.db
 node_modules/
 .next/
+
+# local tooling (portable PHP и прочие локальные утилиты)
+/.tools/
+
