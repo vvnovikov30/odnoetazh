@@ -3,7 +3,7 @@ name: Deploy to Hosting
 on:
   push:
     branches:
-      - main  # Срабатывает при каждом git push в ветку main
+      - main
 
 jobs:
   web-deploy:
@@ -22,14 +22,24 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           server-dir: /www/xn--80ahhialrcec8b1i.xn--p1ai/
+          protocol: ftps
+          port: 21
+          timeout: 60000
+          security: loose
           exclude: |
             **/.git*
             **/.git*/**
             **/.tools/**
+            app/**
+            components/**
+            content/**
+            posts/**
+            node_modules/**
+            .next/**
             *.bat
             *.ps1
+            *.md
+            .clinerules
             requests.*
-            .gitignore
-            README.md
             package*.json
             tsconfig.json
