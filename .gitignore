@@ -1,52 +1,28 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Сайт статический на PHP — Node.js/Next.js в проекте больше не используются.
+# Здесь только правила для локальных артефактов и файлов с ПДн.
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# зависимости и артефакты сборки (на случай локальных JS-инструментов)
+/node_modules/
+/build/
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
-.DS_Store
-*.pem
-
-# debug
+# окружение и логи
+.env*.local
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
-.env*.local
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-next-env.d.ts
-
-
-
-*.zip
-requests.txt
-requests.json
+# ОС и архивы
 .DS_Store
 Thumbs.db
-node_modules/
-.next/
+*.zip
+*.pem
+
+# заявки с ПДн — хранятся вне вебрута и вне git
+requests.txt
+requests.json
 
 # local tooling (portable PHP и прочие локальные утилиты)
 /.tools/
-
 
 # python
 __pycache__/

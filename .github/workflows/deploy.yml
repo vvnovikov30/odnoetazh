@@ -25,12 +25,18 @@ jobs:
           git archive --format=tar HEAD | tar -x -C .deploy
 
           status=0
-          for forbidden in tests .github .git .tools .clinerules requests.json requests.txt; do
-            if [ -e ".deploy/$forbidden" ]; then
-              echo "::error::Служебный объект '$forbidden' попал в .deploy — деплой остановлен"
-              status=1
-            fi
-          done
+          # Исходники SSG (content/, templates/, *.py), тесты и инфраструктура на хостинге
+          # не нужны: статьи уже скомпилированы в blog/*.php, шаблон встроен в каждую страницу.
+          # Пустые каталоги из git archive утечкой не считаются — ищем только файлы.
+          leaked=$(cd .deploy && find . -type f \( \
+            -path './tests/*' -o -path './.github/*' -o -path './.git/*' -o \
+            -path './.tools/*' -o -path './.clinerules' -o \
+            -path './content/*' -o -path './templates/*' -o \
+            -name 'requests.json' -o -name 'requests.txt' \) | head -20)
+          if [ -n "$leaked" ]; then
+            echo "::error::В .deploy попали служебные файлы: $leaked"
+            status=1
+          fi
 
           stray=$(cd .deploy && find . \( -name '*.bat' -o -name '*.ps1' -o -name '*.md' -o -name '*.py' -o -name '*.ndjson' -o -name '.env' \))
           if [ -n "$stray" ]; then
@@ -38,7 +44,16 @@ jobs:
             status=1
           fi
 
-          for required in index.php .htaccess robots.txt sitemap.xml; do
+          # Сгенерированные статьи блога — часть сайта: blog/ должен содержать хотя бы
+          # одну страницу, если в каталоге blog.php есть ссылки на blog/*.php.
+          if grep -q 'href="blog/' .deploy/blog.php 2>/dev/null; then
+            if [ -z "$(find .deploy/blog -type f -name '*.php' 2>/dev/null | head -1)" ]; then
+              echo "::error::В blog.php есть карточки статей, но в .deploy/blog/ нет страниц"
+              status=1
+            fi
+          fi
+
+          for required in index.php blog.php .htaccess robots.txt sitemap.xml; do
             if [ ! -f ".deploy/$required" ]; then
               echo "::error::Обязательный файл '$required' отсутствует в .deploy"
               status=1

@@ -1,5 +1,9 @@
 <?php
 // footer.php - Единый footer для всех страниц
+// $base_href задаётся в header.php: '' для корня сайта, '../' для /blog/.
+if (!isset($base_href)) {
+    $base_href = '';
+}
 ?>
     </main>
 
@@ -15,10 +19,10 @@
                 <div class="footer-section">
                     <h4>Навигация</h4>
                     <ul>
-                        <li><a href="index.php">Главная</a></li>
-                        <li><a href="architecture.php">Архитектура и дизайн</a></li>
-                        <li><a href="construction.php">Строительные услуги</a></li>
-                        <li><a href="blog.php">Блог</a></li>
+                        <li><a href="<?php echo $base_href; ?>index.php">Главная</a></li>
+                        <li><a href="<?php echo $base_href; ?>architecture.php">Архитектура и дизайн</a></li>
+                        <li><a href="<?php echo $base_href; ?>construction.php">Строительные услуги</a></li>
+                        <li><a href="<?php echo $base_href; ?>blog.php">Блог</a></li>
                     </ul>
                 </div>
                 
@@ -41,6 +45,6 @@
         </div>
     </footer>
 
-    <script src="scripts/main.js"></script>
+    <script src="<?php echo $base_href; ?>scripts/main.js"></script>
 </body>
 </html>

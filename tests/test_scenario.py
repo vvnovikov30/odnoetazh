@@ -15,8 +15,10 @@
     prod  — https://одноэтажники.рф (Punycode: xn--80ahhialrcec8b1i.xn--p1ai)
 
 Сценарии:
-    1. Статический анализ синтаксиса PHP (`php -l` по всем *.php в корне) — только local.
-    2. Доступность страниц, robots.txt, sitemap.xml и отсутствие PHP-ошибок в HTML.
+    1. Статический анализ синтаксиса PHP (`php -l` по *.php корня, blog/, templates/)
+       и актуальность сгенерированных файлов блога (scripts/build_blog.py --check) — только local.
+    2. Доступность страниц, сгенерированных статей блога, robots.txt, sitemap.xml
+       и отсутствие PHP-ошибок в HTML.
     3. Закрытие служебных файлов и файлов с ПДн (.htaccess: 403/404).
     4. API заявок send-email.php: только POST, honeypot, form_ts, валидная заявка.
     5. Медиа-ассеты и фотографии галереи проекта «Лесные Поляны».
@@ -567,7 +569,12 @@ def scenario_php_syntax(reporter: Reporter, ctx: Context) -> None:
         )
         return
 
-    files = sorted(path for path in ctx.repo_root.glob("*.php") if path.is_file())
+    files = sorted(
+        path
+        for pattern in ("*.php", "blog/*.php", "templates/*.php")
+        for path in ctx.repo_root.glob(pattern)
+        if path.is_file()
+    )
     if not files:
         reporter.row("поиск PHP-файлов в корне", FAIL, 0.0, f"в {ctx.repo_root} нет ни одного *.php")
         return
@@ -576,15 +583,70 @@ def scenario_php_syntax(reporter: Reporter, ctx: Context) -> None:
     for file in files:
         started = time.perf_counter()
         ok, verdict = lint_php_file(php, file, ctx.repo_root)
-        reporter.row(file.name, PASS if ok else FAIL, time.perf_counter() - started,
-                     "" if ok else verdict)
+        reporter.row(file.relative_to(ctx.repo_root).as_posix(), PASS if ok else FAIL,
+                     time.perf_counter() - started, "" if ok else verdict)
         broken += 0 if ok else 1
 
     if broken:
         reporter.alerts.append(f"синтаксические ошибки PHP в {broken} файл(ах) — деплой запрещён")
 
+    check_ssg_freshness(reporter, ctx)
+
 
 # ===== СЦЕНАРИЙ 2: СТРАНИЦЫ =====
+def check_ssg_freshness(reporter: Reporter, ctx: Context) -> None:
+    """Страницы blog/*.php и sitemap.xml должны совпадать с content/articles/*.md."""
+    script = ctx.repo_root / "scripts" / "build_blog.py"
+    if not script.is_file():
+        reporter.row("SSG блога (build_blog.py --check)", SKIP, 0.0, "скрипт сборки не найден")
+        return
+
+    started = time.perf_counter()
+    try:
+        completed = subprocess.run(
+            [sys.executable, str(script), "--check"],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            cwd=str(ctx.repo_root),
+            timeout=120,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        reporter.row("SSG блога (build_blog.py --check)", FAIL, time.perf_counter() - started,
+                     f"не удалось запустить сборку: {exc}")
+        return
+
+    if completed.returncode == 0:
+        reporter.row("SSG блога (build_blog.py --check)", PASS, time.perf_counter() - started)
+        return
+
+    output = f"{completed.stdout}\n{completed.stderr}".strip()
+    verdict = " ".join(line.strip() for line in output.splitlines() if line.strip())
+    reporter.row("SSG блога (build_blog.py --check)", FAIL, time.perf_counter() - started,
+                 (verdict or f"код возврата {completed.returncode}")[:400])
+
+
+def article_paths(repo_root: Path) -> list[str]:
+    """URL-пути статей блога из sitemap.xml (источник истины — сгенерированный файл)."""
+    sitemap = repo_root / "sitemap.xml"
+    if not sitemap.is_file():
+        return []
+    try:
+        root = ET.fromstring(sitemap.read_text(encoding="utf-8"))
+    except (OSError, ET.ParseError):
+        return []
+
+    paths = set()
+    for element in root.iter():
+        if not element.tag.endswith("loc") or not element.text:
+            continue
+        path = urllib.parse.urlparse(element.text.strip()).path
+        if re.fullmatch(r"/blog/[^/]+\.php", path):
+            paths.add(path)
+    return sorted(paths)
+
+
 def check_page(reporter: Reporter, ctx: Context, path: str) -> None:
     """HTTP 200 + отсутствие PHP-ошибок + признаки живой страницы."""
     result = ctx.client.get(path)
@@ -606,6 +668,24 @@ def check_page(reporter: Reporter, ctx: Context, path: str) -> None:
         reporter.row(path, FAIL, result.elapsed, "в HTML нет названия компании — страница отдана некорректно")
         return
     reporter.row(path, PASS, result.elapsed)
+
+
+def check_blog_cards(reporter: Reporter, ctx: Context, articles: list[str]) -> None:
+    """Каталог blog.php должен ссылаться на каждую статью из sitemap.xml."""
+    result = ctx.client.get("/blog.php")
+    if not result.ok:
+        reporter.row("blog.php → карточки статей", FAIL, result.elapsed,
+                     f"ожидался HTTP 200, получено {result.describe()}")
+        return
+
+    body = result.text
+    missing = [path for path in articles if f'href="{path.lstrip("/")}"' not in body]
+    reporter.row(
+        "blog.php → карточки статей",
+        FAIL if missing else PASS,
+        result.elapsed,
+        f"нет ссылок на: {', '.join(missing)}" if missing else f"карточек со ссылкой на статьи: {len(articles)}",
+    )
 
 
 def check_robots(reporter: Reporter, ctx: Context) -> None:
@@ -665,12 +745,21 @@ def check_sitemap(reporter: Reporter, ctx: Context) -> None:
 
 
 def scenario_pages(reporter: Reporter, ctx: Context) -> None:
-    """Сценарий 2: доступность страниц, robots.txt и sitemap.xml."""
-    reporter.scenario = "Сценарий 2. Страницы, robots.txt, sitemap.xml"
+    """Сценарий 2: доступность страниц, статей блога, robots.txt и sitemap.xml."""
+    reporter.scenario = "Сценарий 2. Страницы, статьи, robots.txt, sitemap.xml"
     reporter.header(reporter.scenario)
 
     for path in PAGES:
         check_page(reporter, ctx, path)
+
+    articles = article_paths(ctx.repo_root)
+    if articles:
+        for path in articles:
+            check_page(reporter, ctx, path)
+        check_blog_cards(reporter, ctx, articles)
+    else:
+        reporter.row("страницы статей блога", INFO, 0.0, "в sitemap.xml нет статей — проверять нечего")
+
     check_robots(reporter, ctx)
     check_sitemap(reporter, ctx)
 
