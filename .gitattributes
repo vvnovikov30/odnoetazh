@@ -25,3 +25,9 @@
 /postcss.config.mjs export-ignore
 /tailwind.config.ts export-ignore
 /tsconfig.json      export-ignore
+
+.tools/ export-ignore
+*.py export-ignore
+.tools export-ignore
+.tools/** export-ignore
+**/*.py export-ignore
