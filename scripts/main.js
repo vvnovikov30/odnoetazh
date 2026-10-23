@@ -153,7 +153,8 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // ===== 6. Ленивая загрузка изображений =====
-    document.querySelectorAll('img').forEach(img => {
+    // LCP-изображения (fetchpriority="high", loading="eager") не переводим в lazy.
+    document.querySelectorAll('img:not([loading="eager"]):not([fetchpriority="high"])').forEach(img => {
         if ('loading' in img) {
             img.loading = 'lazy';
         }
@@ -180,6 +181,19 @@ document.addEventListener('DOMContentLoaded', function() {
         if (showroomTabs.length && showroomPanels.length) {
             showroom.classList.add('showroom--enhanced');
 
+            // On-Demand Loading: неактивные табы держат SVG-заглушку,
+            // боевой _thumb.webp подставляется только при активации панели.
+            const loadTabImages = function(panel) {
+                if (!panel) {
+                    return;
+                }
+
+                panel.querySelectorAll('img[data-src]').forEach(img => {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                });
+            };
+
             const activateShowroomTab = function(name, moveFocus) {
                 showroomTabs.forEach(tab => {
                     const isActive = tab.dataset.tab === name;
@@ -197,6 +211,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     panel.classList.toggle('is-active', isActive);
                     panel.hidden = !isActive;
                 });
+
+                // Подгружаем картинки только что открытой панели.
+                loadTabImages(showroomPanels.find(panel => panel.dataset.tabPanel === name));
             };
 
             showroomTabs.forEach((tab, index) => {
@@ -226,7 +243,91 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const initialShowroomTab = showroomTabs.find(tab => tab.getAttribute('aria-selected') === 'true') || showroomTabs[0];
             activateShowroomTab(initialShowroomTab.dataset.tab, false);
+
+            // Первый экран: активная панель подгружается сразу при инициализации.
+            loadTabImages(showroomPanels.find(panel => panel.dataset.tabPanel === initialShowroomTab.dataset.tab));
         }
+    }
+
+    // ===== 9. Лайтбокс: просмотр Full-HD фото шоурума (vanilla JS) =====
+    const lightbox = document.getElementById('lightboxModal');
+    if (lightbox) {
+        const lightboxImage = lightbox.querySelector('.lightbox-image');
+        const lightboxCaption = lightbox.querySelector('.lightbox-caption');
+        const lightboxClose = lightbox.querySelector('.lightbox-close');
+        let lightboxTrigger = null;
+
+        const openLightbox = function(link) {
+            if (!lightboxImage) {
+                return;
+            }
+
+            const preview = link.querySelector('img');
+
+            lightboxTrigger = link;
+            lightboxImage.src = link.getAttribute('href');
+            lightboxImage.alt = preview ? preview.alt : '';
+
+            if (lightboxCaption) {
+                lightboxCaption.textContent = link.dataset.caption || '';
+            }
+
+            lightbox.classList.add('is-open');
+            lightbox.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+
+            if (lightboxClose) {
+                lightboxClose.focus();
+            }
+        };
+
+        const closeLightbox = function() {
+            lightbox.classList.remove('is-open');
+            lightbox.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+
+            if (lightboxImage) {
+                lightboxImage.removeAttribute('src');
+                lightboxImage.alt = '';
+            }
+
+            if (lightboxCaption) {
+                lightboxCaption.textContent = '';
+            }
+
+            if (lightboxTrigger) {
+                lightboxTrigger.focus();
+                lightboxTrigger = null;
+            }
+        };
+
+        // Делегирование: ссылки появляются и в панелях, подгруженных позже.
+        document.addEventListener('click', function(event) {
+            const link = event.target.closest ? event.target.closest('.showroom-link') : null;
+            if (!link) {
+                return;
+            }
+
+            event.preventDefault();
+            openLightbox(link);
+        });
+
+        if (lightboxClose) {
+            lightboxClose.addEventListener('click', closeLightbox);
+        }
+
+        // Клик по фону (сам оверлей или «подложка» фигуры) закрывает окно.
+        lightbox.addEventListener('click', function(event) {
+            if (event.target === lightbox || event.target.classList.contains('lightbox-figure')) {
+                closeLightbox();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && lightbox.classList.contains('is-open')) {
+                closeLightbox();
+            }
+        });
     }
 
     console.log('✅ ОдноЭтажники.РФ JavaScript инициализирован');

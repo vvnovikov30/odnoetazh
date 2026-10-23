@@ -36,7 +36,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2025 <?php echo $company['name']; ?>. Все права защищены.</p>
+                <p>&copy; 2026 <?php echo $company['name']; ?>. Все права защищены.</p>
             </div>
         </div>
     </footer>

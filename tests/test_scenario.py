@@ -90,6 +90,16 @@ ASSETS = (
     "lesnye-polyany-plan-energy-efficient-floor-plan-ushp-01.jpg",
 )
 
+# WebP-производные (thumb для сетки + _full для лайтбокса) — основной формат витрины.
+WEBP_ASSETS = (
+    "/images/projects/lesnye-polyany/exterior/"
+    "lesnye-polyany-exterior-modern-japandi-chalet-noki-overhangs-01_thumb.webp",
+    "/images/projects/lesnye-polyany/exterior/"
+    "lesnye-polyany-exterior-modern-japandi-chalet-noki-overhangs-01_full.webp",
+    "/images/projects/lesnye-polyany/plan/"
+    "lesnye-polyany-plan-energy-efficient-floor-plan-ushp-01_thumb.webp",
+)
+
 PASS, FAIL, SKIP, INFO = "PASS", "FAIL", "SKIP", "INFO"
 
 
@@ -856,6 +866,23 @@ def scenario_assets(reporter: Reporter, ctx: Context) -> None:
             problems.append("пустой ответ")
         elif "text/html" in result.content_type:
             problems.append(f"вместо файла отдана HTML-страница ({result.content_type})")
+        reporter.row(path.rsplit("/", 1)[-1], FAIL if problems else PASS, result.elapsed,
+                     "; ".join(problems) or f"{len(result.body) / 1024:.0f} КБ, {result.content_type}")
+
+    # 5b — WebP витрины: thumb для сетки и _full для лайтбокса
+    for path in WEBP_ASSETS:
+        result = ctx.client.get(path)
+        problems = []
+        if not result.ok:
+            problems.append(f"ожидался HTTP 200, получено {result.describe()}")
+        elif not result.body:
+            problems.append("пустой ответ")
+        elif "text/html" in result.content_type:
+            problems.append(f"вместо WebP отдана HTML-страница ({result.content_type})")
+        elif "image/webp" not in result.content_type:
+            problems.append(f"неожиданный Content-Type: {result.content_type}")
+        elif result.body[:4] != b"RIFF" or result.body[8:12] != b"WEBP":
+            problems.append("ответ не является WebP-контейнером (нет сигнатуры RIFF/WEBP)")
         reporter.row(path.rsplit("/", 1)[-1], FAIL if problems else PASS, result.elapsed,
                      "; ".join(problems) or f"{len(result.body) / 1024:.0f} КБ, {result.content_type}")
 
