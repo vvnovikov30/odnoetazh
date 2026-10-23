@@ -847,7 +847,9 @@ a:hover {
 .logo-link {
     display: flex;
     align-items: center;
+    gap: 12px;
     text-decoration: none;
+    flex-shrink: 0;
     transition: opacity var(--duration-fast) var(--ease-standard);
 }
 
@@ -861,12 +863,15 @@ a:hover {
     border-radius: var(--radius-base);
 }
 
-/* Картинка логотипа */
+/* Картинка логотипа: строгая высота 44px, ширина — по пропорциям.
+   max-width намеренно не задаём: раньше он «раздувал» логотип до 180px,
+   и изображение наезжало на навигацию. */
 .logo-image {
-    max-width: 80px;
-    height: auto;
+    height: 44px;
+    max-height: 44px;
+    width: auto;
+    object-fit: contain;
     display: block;
-    width: 100%;
     flex-shrink: 0;
 }
 
@@ -897,10 +902,6 @@ a:hover {
 
 /* Адаптация под планшеты (768px - 1024px) */
 @media (max-width: 1024px) {
-    .logo-image {
-        max-width: 70px;
-    }
-    
     .logo-title {
         font-size: var(--font-size-md);
     }
@@ -914,10 +915,6 @@ a:hover {
 @media (max-width: 767px) {
     .logo {
         gap: var(--space-8);
-    }
-    
-    .logo-image {
-        max-width: 60px;
     }
     
     .logo-title {
@@ -936,10 +933,6 @@ a:hover {
         gap: var(--space-6);
     }
     
-    .logo-image {
-        max-width: 50px;
-    }
-    
     .logo-title {
         font-size: var(--font-size-sm);
     }
@@ -954,10 +947,6 @@ a:hover {
 @media (max-width: 360px) {
     .logo {
         gap: var(--space-4);
-    }
-    
-    .logo-image {
-        max-width: 45px;
     }
     
     .logo-title {
@@ -987,6 +976,24 @@ a:hover {
 
 .nav a:hover {
     color: var(--color-primary);
+}
+
+/* Планшеты и узкие экраны: логотип и CTA остаются в первой строке,
+   навигация переносится во вторую. Раньше перенос начинался только с 767px,
+   и на ширине 768–992px шапка выходила за край экрана. */
+@media (max-width: 992px) {
+    .header-content {
+        flex-wrap: wrap;
+        row-gap: var(--space-12);
+    }
+
+    .nav {
+        order: 3;
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--space-12);
+    }
 }
 
 /* ===== КНОПКИ ===== */
@@ -2409,10 +2416,6 @@ a:hover {
 
 /* Планшеты (768px - 1024px) */
 @media (max-width: 1024px) {
-    .logo-image {
-        max-width: 180px;
-    }
-    
     h1 {
         font-size: var(--font-size-3xl);
     }
@@ -2446,10 +2449,6 @@ a:hover {
 
 /* Маленькие планшеты и большие телефоны (480px - 767px) */
 @media (max-width: 767px) {
-    .logo-image {
-        max-width: 150px;
-    }
-    
     .logo {
         gap: var(--space-12);
     }
@@ -2528,10 +2527,6 @@ a:hover {
 
 /* Mobile portrait (до 480px) - Added for design system compliance */
 @media (max-width: 480px) {
-    .logo-image {
-        max-width: 120px;
-    }
-    
     .logo {
         gap: var(--space-8);
     }
@@ -2671,10 +2666,6 @@ a:hover {
 
 /* Очень маленькие телефоны (до 360px) */
 @media (max-width: 360px) {
-    .logo-image {
-        max-width: 100px;
-    }
-    
     .logo {
         gap: var(--space-4);
     }

@@ -47,7 +47,8 @@ if (!isset($page_title)) {
             <div class="header-content">
              <div class="logo">
                     <a href="index.php" class="logo-link">
-                        <img src="logo2.jpg" alt="Логотип" class="logo-image">
+                        <img src="logo2.jpg" alt="<?php echo $company['name']; ?>" class="logo-image"
+                             width="62" height="44" loading="eager" decoding="async">
                         <div class="logo-text">
                             <h2 class="logo-title"><?php echo $company['name']; ?></h2>
                             <p class="logo-tagline"><?php echo $company['tagline']; ?></p>
