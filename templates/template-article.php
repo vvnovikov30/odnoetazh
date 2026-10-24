@@ -101,4 +101,16 @@ require_once __DIR__ . '/../header.php';
 <?php echo json_encode($articleSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT); ?>
         </script>
 
+        <!-- Lightbox статьи: иллюстрации .article-figure открываются в карусели
+             (scripts/main.js ограничивает её группой ссылок внутри .article-content) -->
+        <div id="lightboxModal" class="lightbox-modal" aria-hidden="true" role="dialog" aria-label="Просмотр фотографии">
+            <button type="button" class="lightbox-close" aria-label="Закрыть (Esc)">&times;</button>
+            <button type="button" class="lightbox-prev" aria-label="Предыдущее фото (Стрелка влево)">&#10094;</button>
+            <button type="button" class="lightbox-next" aria-label="Следующее фото (Стрелка вправо)">&#10095;</button>
+            <figure class="lightbox-figure">
+                <img alt="" class="lightbox-image">
+                <figcaption class="lightbox-caption"></figcaption>
+            </figure>
+        </div>
+
 <?php require_once __DIR__ . '/../footer.php'; ?>

@@ -13,6 +13,12 @@ $targetCard = '04';
 $contentHtml = <<<'BLOG_ARTICLE_HTML'
 <h1>Свежесть против чистоты: почему ваша вентиляция может убивать воздух</h1>
 <p>Воздух — невидимая, но самая важная «еда» человека, от качества которой мы зависим более всего. Без еды человек способен прожить несколько недель, без воды — несколько дней, без воздуха — несколько минут. Но качество воздуха зависит не только от его чистоты, а от двух взаимодополняющих факторов: <strong>чистоты и свежести</strong>.</p>
+<figure class="article-figure">
+    <a href="../images/projects/lesnye-polyany/kitchen/lesnye-polyany-kitchen-modern-kitchen-high-ceilings-3m-01_full.webp" class="showroom-link" data-caption="Кухня-гостиная: высота потолков 3.3 м и воздухообмен">
+        <img src="../images/projects/lesnye-polyany/kitchen/lesnye-polyany-kitchen-modern-kitchen-high-ceilings-3m-01_thumb.webp" alt="Кухня-гостиная с высокими потолками 3.3 м" width="562" height="750" loading="lazy" decoding="async">
+    </a>
+    <figcaption>Высота потолков 3.3 м обеспечивает стабильный буфер свежего воздуха</figcaption>
+</figure>
 <h2>Две категории качества воздуха</h2>
 <p>Профессионалы в области вентиляции часто ограничивают понимание качества воздуха только его <strong>чистотой</strong> — отсутствием пыли, микробов и поллютантов. Они измеряют содержание CO₂ и PM2.5, устанавливают мощные фильтры, достигая практически стерильного воздуха. Однако исследования показывают, что это необходимое, но совершенно недостаточное условие.</p>
 <p>Как отмечает профессор Ю.Д. Губернский в своих трудах по гигиене окружающей среды: <strong>«Человек считает воздух чистым и свежим только в том случае, если он содержит так называемый ионно-оздоровительный комплекс»</strong>. Это означает, что воздух должен быть не только химически чистым, но и физически полноценным — естественно ионизированным.</p>
@@ -100,6 +106,12 @@ $contentHtml = <<<'BLOG_ARTICLE_HTML'
 </div>
 <h2>Вентиляция должна работать с природой, а не против неё</h2>
 <p>Простая, надёжная система, которая позволяет свежему воздуху поступать в жилые помещения без механической обработки и позволяет влажному воздуху естественным путём покидать здание — это не только экономичнее, но и <strong>гораздо полезнее для здоровья обитателей</strong>, когда окружающая среда это позволяет.</p>
+<figure class="article-figure">
+    <a href="../images/projects/lesnye-polyany/bathroom/lesnye-polyany-bathroom-barrier-free-bathroom-walk-in-shower-02_full.webp" class="showroom-link" data-caption="Окно в парной: естественный приток и гравитационная вытяжка">
+        <img src="../images/projects/lesnye-polyany/bathroom/lesnye-polyany-bathroom-barrier-free-bathroom-walk-in-shower-02_thumb.webp" alt="Окно в парной дома-шоурума 90.8 м²" width="562" height="750" loading="lazy" decoding="async">
+    </a>
+    <figcaption>Окно в парной — не декор, а приточный клапан: свежий воздух приходит без вентилятора</figcaption>
+</figure>
 <p>И главное — это система, которая <strong>не требует постоянного надзора и технического обслуживания</strong>. Она работает тихо, надёжно и столько же лет, сколько существует сам дом. Нет расходных материалов, нет обслуживающих контрактов, нет риска обнаружить через пять лет, что вентиляция давно не работает.</p>
 <p>Согласно исследованиям Чижевского и Скипетрова, такая система сохраняет воздух живым, предотвращая эффект <strong>аэроионного голодания</strong> — состояния, которое организм воспринимает как угрозу и реагирует хронической усталостью, депрессией и ослаблением иммунитета.</p>
 <h2>Заключение</h2>
@@ -225,5 +237,17 @@ require_once __DIR__ . '/../header.php';
         <script type="application/ld+json">
 <?php echo json_encode($articleSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT); ?>
         </script>
+
+        <!-- Lightbox статьи: иллюстрации .article-figure открываются в карусели
+             (scripts/main.js ограничивает её группой ссылок внутри .article-content) -->
+        <div id="lightboxModal" class="lightbox-modal" aria-hidden="true" role="dialog" aria-label="Просмотр фотографии">
+            <button type="button" class="lightbox-close" aria-label="Закрыть (Esc)">&times;</button>
+            <button type="button" class="lightbox-prev" aria-label="Предыдущее фото (Стрелка влево)">&#10094;</button>
+            <button type="button" class="lightbox-next" aria-label="Следующее фото (Стрелка вправо)">&#10095;</button>
+            <figure class="lightbox-figure">
+                <img alt="" class="lightbox-image">
+                <figcaption class="lightbox-caption"></figcaption>
+            </figure>
+        </div>
 
 <?php require_once __DIR__ . '/../footer.php'; ?>

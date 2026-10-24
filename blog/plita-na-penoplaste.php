@@ -14,6 +14,12 @@ $contentHtml = <<<'BLOG_ARTICLE_HTML'
 <h1>Мелкозаглубленная ЖБ-плита на пенопласте для каркасного дома на пучинистых грунтах Подмосковья</h1>
 <h2>Введение: проблема пучинистых грунтов и надежного фундамента</h2>
 <p>В Московской области <strong>более 80% территории — пучинистые грунты</strong> (глины, суглинки, пески), которые зимой расширяются, а весной возвращаются обратно. Для домов легкой конструкции это настоящая проблема: фундамент вспучивает, конструкция "играет", появляются трещины — особенно если пренебречь грамотным проектированием и технологией устройства основания (п.4 ТСН 50-303-99).</p>
+<figure class="article-figure">
+    <a href="../images/projects/lesnye-polyany/plan/lesnye-polyany-plan-energy-efficient-floor-plan-ushp-01_full.webp" class="showroom-link" data-caption="Чертёж фундамента УШП: контуры водяного теплого пола дома 90.8 м²">
+        <img src="../images/projects/lesnye-polyany/plan/lesnye-polyany-plan-energy-efficient-floor-plan-ushp-01_thumb.webp" alt="Схема монолитной плиты с контурами теплого пола" width="629" height="750" loading="lazy" decoding="async">
+    </a>
+    <figcaption>Схема раскладки водяных контуров отопления в плите шоурума (без радиаторов)</figcaption>
+</figure>
 <h2>Технический разбор: как работает фундамент-плита на пенопласте</h2>
 <p>Такое решение проектируется по следующим шагам:</p>
 <ul>
@@ -166,5 +172,17 @@ require_once __DIR__ . '/../header.php';
         <script type="application/ld+json">
 <?php echo json_encode($articleSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT); ?>
         </script>
+
+        <!-- Lightbox статьи: иллюстрации .article-figure открываются в карусели
+             (scripts/main.js ограничивает её группой ссылок внутри .article-content) -->
+        <div id="lightboxModal" class="lightbox-modal" aria-hidden="true" role="dialog" aria-label="Просмотр фотографии">
+            <button type="button" class="lightbox-close" aria-label="Закрыть (Esc)">&times;</button>
+            <button type="button" class="lightbox-prev" aria-label="Предыдущее фото (Стрелка влево)">&#10094;</button>
+            <button type="button" class="lightbox-next" aria-label="Следующее фото (Стрелка вправо)">&#10095;</button>
+            <figure class="lightbox-figure">
+                <img alt="" class="lightbox-image">
+                <figcaption class="lightbox-caption"></figcaption>
+            </figure>
+        </div>
 
 <?php require_once __DIR__ . '/../footer.php'; ?>

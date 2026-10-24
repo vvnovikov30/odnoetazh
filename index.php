@@ -375,6 +375,7 @@ include 'header.php';
                         <h3>Тёплый фундамент</h3>
                         <p>Железобетонная плита с водяным тёплым полом по всей площади: нет холодных зон и радиаторов.</p>
                         <p class="engineering-card__tag">УШП · тёплый пол · без радиаторов</p>
+                        <a href="blog/plita-na-penoplaste.php" class="engineering-card__link">Инженерный разбор плиты по СП 22.13330 →</a>
                     </article>
 
                     <article class="engineering-card">
@@ -396,6 +397,7 @@ include 'header.php';
                         <h3>Естественный свет</h3>
                         <p>Окна во всех комнатах, включая санузлы, гардеробную и тамбур. Потолки до 3.3 м.</p>
                         <p class="engineering-card__tag">окна в каждой комнате · потолки 3.3 м</p>
+                        <a href="blog/ventilyaciya.php" class="engineering-card__link">Физика воздухообмена и аэроионизация →</a>
                     </article>
                 </div>
             </div>
@@ -409,24 +411,17 @@ include 'header.php';
                 
                 <div class="blog-grid">
                     <article class="blog-card">
-                        <h3>Как выбрать подрядчика для строительства дома</h3>
-                        <p class="blog-meta">14 февраля 2026 | Сергей Иванов</p>
-                        <p>Выбор подрядчика - критическое решение, от которого зависит качество и сроки проекта. Узнайте, на какие факторы обратить внимание...</p>
-                        <a href="blog.php" class="read-more">Читать далее →</a>
+                        <h3>Плита на пенопласте: расчет нагрузок, теплотехника и нормативная база СП 22.13330</h3>
+                        <p class="blog-meta">23 октября 2026 | ОдноЭтажники.РФ</p>
+                        <p>Инженерный анализ плитного фундамента: распределение давлений, ликвидация морозного пучения и физика водяного теплого пола без радиаторов.</p>
+                        <a href="blog/plita-na-penoplaste.php" class="read-more">Читать разбор →</a>
                     </article>
-                    
+
                     <article class="blog-card">
-                        <h3>Архитектурные тренды 2026</h3>
-                        <p class="blog-meta">18 мая 2026 | Александра Петрова</p>
-                        <p>Главные тренды в архитектуре и дизайне, которые определяют облик современного жилья. Минимализм, устойчивость, функциональность...</p>
-                        <a href="blog.php" class="read-more">Читать далее →</a>
-                    </article>
-                    
-                    <article class="blog-card">
-                        <h3>Электромонтажные работы: полный гайд</h3>
-                        <p class="blog-meta">10 сентября 2026 | Игорь Сорокин</p>
-                        <p>Разбираемся, какие работы входят в электромонтаж, какие требуют лицензирования и как не допустить ошибок при выборе подрядчика...</p>
-                        <a href="blog.php" class="read-more">Читать далее →</a>
+                        <h3>Физика свежести: рекуперация, аэроионы и потолки 3.3 м в одноэтажном доме</h3>
+                        <p class="blog-meta">23 октября 2026 | ОдноЭтажники.РФ</p>
+                        <p>Почему при высоте потолков 3.3 м микроклимат принципиально отличается: физиология аэроионизации, воздухообмен и рекуперация тепла.</p>
+                        <a href="blog/ventilyaciya.php" class="read-more">Читать разбор →</a>
                     </article>
                 </div>
             </div>
@@ -533,7 +528,9 @@ include 'header.php';
 
         <!-- Lightbox: последний узел body перед footer.php (там закрываются </main> и </body>) -->
         <div id="lightboxModal" class="lightbox-modal" aria-hidden="true" role="dialog" aria-label="Просмотр фотографии">
-            <button type="button" class="lightbox-close" aria-label="Закрыть">&times;</button>
+            <button type="button" class="lightbox-close" aria-label="Закрыть (Esc)">&times;</button>
+            <button type="button" class="lightbox-prev" aria-label="Предыдущее фото (Стрелка влево)">&#10094;</button>
+            <button type="button" class="lightbox-next" aria-label="Следующее фото (Стрелка вправо)">&#10095;</button>
             <figure class="lightbox-figure">
                 <img alt="" class="lightbox-image">
                 <figcaption class="lightbox-caption"></figcaption>

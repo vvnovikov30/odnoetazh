@@ -258,28 +258,73 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // ===== 9. Лайтбокс: просмотр Full-HD фото шоурума (vanilla JS) =====
+    // ===== 9. Лайтбокс-карусель: Full-HD фото шоурума и иллюстрации статей =====
     const lightbox = document.getElementById('lightboxModal');
     if (lightbox) {
         const lightboxImage = lightbox.querySelector('.lightbox-image');
         const lightboxCaption = lightbox.querySelector('.lightbox-caption');
         const lightboxClose = lightbox.querySelector('.lightbox-close');
-        let lightboxTrigger = null;
+        const lightboxPrev = lightbox.querySelector('.lightbox-prev');
+        const lightboxNext = lightbox.querySelector('.lightbox-next');
 
-        const openLightbox = function(link) {
-            if (!lightboxImage) {
+        // Активная группа фото: панель шоурума, тело статьи или вся страница.
+        // Навигация никогда не выходит за пределы этой группы.
+        let currentGallery = [];
+        let currentIndex = -1;
+        let lightboxTrigger = null;
+        let touchStartX = null;
+
+        // Единая точка отрисовки: стрелки, подписи, alt и предзагрузка соседа.
+        const renderLightbox = function(index) {
+            if (!lightboxImage || currentGallery.length === 0) {
                 return;
             }
 
+            const total = currentGallery.length;
+            // Нормализация индекса: отрицательные значения заворачиваются в конец.
+            currentIndex = ((index % total) + total) % total;
+
+            const link = currentGallery[currentIndex];
             const preview = link.querySelector('img');
 
-            lightboxTrigger = link;
             lightboxImage.src = link.getAttribute('href');
             lightboxImage.alt = preview ? preview.alt : '';
 
             if (lightboxCaption) {
                 lightboxCaption.textContent = link.dataset.caption || '';
             }
+
+            // Стрелки бессмысленны для одиночного снимка.
+            const arrowsDisplay = total > 1 ? 'flex' : 'none';
+            if (lightboxPrev) {
+                lightboxPrev.style.display = arrowsDisplay;
+            }
+            if (lightboxNext) {
+                lightboxNext.style.display = arrowsDisplay;
+            }
+
+            // Предзагрузка следующего кадра: перелистывание без «мигания».
+            const upcoming = new Image();
+            upcoming.src = currentGallery[(currentIndex + 1) % total].getAttribute('href');
+        };
+
+        const openLightbox = function(link) {
+            if (!lightboxImage) {
+                return;
+            }
+
+            const panel = link.closest ? link.closest('.showroom-panel') : null;
+            const article = link.closest ? link.closest('.article-content') : null;
+            const context = panel || article || document;
+
+            currentGallery = Array.from(context.querySelectorAll('.showroom-link'));
+            const foundIndex = currentGallery.indexOf(link);
+            if (foundIndex === -1) {
+                currentGallery = [link];
+            }
+
+            lightboxTrigger = link;
+            renderLightbox(foundIndex === -1 ? 0 : foundIndex);
 
             lightbox.classList.add('is-open');
             lightbox.setAttribute('aria-hidden', 'false');
@@ -304,9 +349,25 @@ document.addEventListener('DOMContentLoaded', function() {
                 lightboxCaption.textContent = '';
             }
 
+            currentGallery = [];
+            currentIndex = -1;
+            touchStartX = null;
+
             if (lightboxTrigger) {
                 lightboxTrigger.focus();
                 lightboxTrigger = null;
+            }
+        };
+
+        const showPrev = function() {
+            if (currentGallery.length > 1) {
+                renderLightbox(currentIndex - 1);
+            }
+        };
+
+        const showNext = function() {
+            if (currentGallery.length > 1) {
+                renderLightbox(currentIndex + 1);
             }
         };
 
@@ -325,6 +386,14 @@ document.addEventListener('DOMContentLoaded', function() {
             lightboxClose.addEventListener('click', closeLightbox);
         }
 
+        if (lightboxPrev) {
+            lightboxPrev.addEventListener('click', showPrev);
+        }
+
+        if (lightboxNext) {
+            lightboxNext.addEventListener('click', showNext);
+        }
+
         // Клик по фону (сам оверлей или «подложка» фигуры) закрывает окно.
         lightbox.addEventListener('click', function(event) {
             if (event.target === lightbox || event.target.classList.contains('lightbox-figure')) {
@@ -333,10 +402,48 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && lightbox.classList.contains('is-open')) {
+            if (!lightbox.classList.contains('is-open')) {
+                return;
+            }
+
+            if (event.key === 'Escape') {
                 closeLightbox();
+                return;
+            }
+
+            if (event.key === 'ArrowLeft') {
+                event.preventDefault();
+                showPrev();
+            } else if (event.key === 'ArrowRight') {
+                event.preventDefault();
+                showNext();
             }
         });
+
+        // Мобильные свайпы: порог 50 px отсекает случайные тапы.
+        lightbox.addEventListener('touchstart', function(event) {
+            touchStartX = event.changedTouches[0].clientX;
+        }, { passive: true });
+
+        lightbox.addEventListener('touchend', function(event) {
+            if (touchStartX === null || !lightbox.classList.contains('is-open')) {
+                touchStartX = null;
+                return;
+            }
+
+            const deltaX = event.changedTouches[0].clientX - touchStartX;
+            touchStartX = null;
+
+            if (Math.abs(deltaX) <= 50) {
+                return;
+            }
+
+            if (deltaX < 0) {
+                showNext();
+            } else {
+                showPrev();
+            }
+        }, { passive: true });
     }
 
     console.log('✅ ОдноЭтажники.РФ JavaScript инициализирован');

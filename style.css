@@ -1782,6 +1782,35 @@ a:hover {
     text-transform: uppercase;
 }
 
+/* Ссылка на инженерный разбор: растянута на всю карточку (::after),
+   поэтому кликабельна вся площадь, а не только строка текста. */
+
+.engineering-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-primary, #10b981);
+    text-decoration: none;
+}
+
+.engineering-card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+}
+
+.engineering-card__link:hover {
+    text-decoration: underline;
+}
+
+.engineering-card__link:focus-visible {
+    outline: var(--focus-outline);
+    outline-offset: 4px;
+}
+
 @media (hover: hover) {
     .engineering-card:hover {
         transform: translateY(-3px);
@@ -2689,6 +2718,36 @@ a:hover {
     border-radius: var(--radius-base);
 }
 
+/* Иллюстрации статей: adaptive <figure> с лайтбоксом (.showroom-link) */
+
+.article-figure {
+    margin: 2.5rem auto;
+    max-width: 100%;
+    text-align: center;
+}
+
+.article-figure img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.4);
+}
+
+.article-figure figcaption {
+    margin-top: 0.85rem;
+    font-size: 0.9rem;
+    color: #94a3b8;
+}
+
+.article-figure .showroom-link {
+    cursor: zoom-in;
+    /* Подчёркивание ссылки обвело бы картинку рамкой из .article-content a */
+    text-decoration: none;
+}
+
 .article-content hr {
     border: none;
     border-top: 1px solid var(--color-border);
@@ -3189,6 +3248,73 @@ a:hover {
 .lightbox-close:focus-visible {
     outline: 2px solid var(--color-white);
     outline-offset: 2px;
+}
+
+/* Стрелки карусели: полупрозрачное стекло, чтобы не забивать фотографию */
+
+.lightbox-prev,
+.lightbox-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background var(--duration-fast) var(--ease-standard),
+                transform var(--duration-fast) var(--ease-standard);
+    z-index: 1010;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.lightbox-prev {
+    left: 20px;
+}
+
+.lightbox-next {
+    right: 20px;
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    background: rgba(255, 255, 255, 0.18);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.lightbox-prev:focus-visible,
+.lightbox-next:focus-visible {
+    outline: 2px solid var(--color-white);
+    outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+    .lightbox-prev,
+    .lightbox-next {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+
+    .lightbox-prev {
+        left: 8px;
+    }
+
+    .lightbox-next {
+        right: 8px;
+    }
 }
 
 @media (max-width: 767px) {
