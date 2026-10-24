@@ -1,12 +1,15 @@
 @echo off
 rem ============================================================================
-rem  run_tests.bat - сценарные тесты сайта ОдноЭтажники.РФ
+rem  run_tests.bat - тесты сайта ОдноЭтажники.РФ
 rem
 rem  Использование:
 rem      run_tests.bat              локальный прогон (сервер на 8000 поднимется сам)
 rem      run_tests.bat local        то же самое, явно
 rem      run_tests.bat prod         проверка боевого сайта (заявки НЕ отправляются)
+rem      run_tests.bat spam         антиспам-тесты send-email.php: TC-01...TC-09
+rem                                 (tests\test_spam_defense.py, нужен пакет requests)
 rem      run_tests.bat local --no-color     любые ключи tests\test_scenario.py
+rem      run_tests.bat spam --keep-artifacts  оставить записи журналов для разбора
 rem
 rem  Код возврата: 0 - всё зелёное, 1 - есть ошибки (удобно для CI).
 rem ============================================================================
@@ -15,7 +18,6 @@ chcp 65001 >nul
 
 set "REPO_DIR=%~dp0"
 if "%REPO_DIR:~-1%"=="\" set "REPO_DIR=%REPO_DIR:~0,-1%"
-set "TEST_SCRIPT=%REPO_DIR%\tests\test_scenario.py"
 
 rem --- 1. Цель и дополнительные ключи -----------------------------------------
 set "TARGET=local"
@@ -25,9 +27,20 @@ for %%A in (%*) do (
         set "TARGET=local"
     ) else if /I "%%~A"=="prod" (
         set "TARGET=prod"
+    ) else if /I "%%~A"=="spam" (
+        set "TARGET=spam"
     ) else (
         set "EXTRA=!EXTRA! %%A"
     )
+)
+
+rem --- 1.1 Набор тестов: local/prod - сценарии, spam - антиспам ----------------
+if /I "%TARGET%"=="spam" (
+    set "TEST_SCRIPT=%REPO_DIR%\tests\test_spam_defense.py"
+    set "SPAM_ONLY=1"
+) else (
+    set "TEST_SCRIPT=%REPO_DIR%\tests\test_scenario.py"
+    set "SPAM_ONLY=0"
 )
 
 rem --- 2. Python --------------------------------------------------------------
@@ -42,8 +55,8 @@ if not errorlevel 1 (
 goto :no_python
 
 :python_ready
-rem --- 3. Portable PHP (нужен только локальному прогону с --serve) ------------
-if /I not "%TARGET%"=="local" goto :run
+rem --- 3. Portable PHP (нужен везде, кроме проверки боевого сайта) --------------
+if /I "%TARGET%"=="prod" goto :run
 
 if exist "%REPO_DIR%\.tools\php\php.exe" goto :run
 where php >nul 2>&1 && goto :run
@@ -59,6 +72,8 @@ echo.
 
 :run
 rem --- 4. Прогон тестов -------------------------------------------------------
+if "%SPAM_ONLY%"=="1" goto :run_spam
+
 set "SERVE_ARG="
 if /I "%TARGET%"=="local" set "SERVE_ARG=--serve"
 
@@ -69,6 +84,18 @@ echo.
 %PY_CMD% "%TEST_SCRIPT%" --target %TARGET% %SERVE_ARG% %EXTRA%
 set "RC=%ERRORLEVEL%"
 echo.
+goto :report
+
+:run_spam
+echo ==========================================================
+echo   Антиспам-тесты send-email.php: TC-01 ... TC-09  (extras:%EXTRA%)
+echo ==========================================================
+echo.
+%PY_CMD% "%TEST_SCRIPT%" %EXTRA%
+set "RC=%ERRORLEVEL%"
+echo.
+
+:report
 if "%RC%"=="0" (
     echo [OK] Все проверки пройдены.
 ) else (

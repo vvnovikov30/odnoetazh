@@ -14,6 +14,15 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // ===== 2. Обработка форм заявок =====
+    // Антиспам: honeypot-поля скрыты от человека, но автозаполнение браузера
+    // или менеджер паролей может подставить в них значение — тогда сервер
+    // молча отбросит честную заявку. Поэтому держим ловушки пустыми.
+    document.querySelectorAll('input[name="user_middle_name"], input[name="website"]').forEach(honeypot => {
+        honeypot.value = '';
+        honeypot.addEventListener('input', () => { honeypot.value = ''; });
+        honeypot.addEventListener('change', () => { honeypot.value = ''; });
+    });
+
     document.querySelectorAll('form').forEach(form => {
         // Комментарии обрабатываются отдельно: у них нет телефона
         if (form.classList.contains('comment-form')) {

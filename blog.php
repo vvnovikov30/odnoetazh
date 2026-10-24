@@ -23,14 +23,27 @@ include 'header.php';
                 <!-- Сетка карточек генерируется scripts/build_blog.py из content/articles/*.md.
                      Правки внутри маркеров BLOG_CARDS будут перезаписаны при сборке. -->
                 <!-- BLOG_CARDS:START -->
+                <div class="blog-filters">
+                    <button class="filter-btn active" onclick="filterBlog('all')">Все статьи</button>
+                    <button class="filter-btn" onclick="filterBlog('cat-1')">Микроклимат</button>
+                    <button class="filter-btn" onclick="filterBlog('cat-2')">Фундамент</button>
+                </div>
                 <div class="articles-grid" id="articlesGrid">
                     <article class="article-card" data-category="cat-1">
                         <div class="article-image" style="background: linear-gradient(135deg, #dfe8e2 0%, #b9cdbf 100%);" aria-hidden="true"></div>
-                        <span class="article-category">Кровля · №01</span>
-                        <h2 class="article-card__title"><a href="blog/shag-stropil-i-uzly-krovli.php">Шаг стропил и три узла кровли, на которых экономят зря</a></h2>
+                        <span class="article-category">Микроклимат · №04</span>
+                        <h2 class="article-card__title"><a href="blog/ventilyaciya.php">Физика свежести: рекуперация, аэроионы и потолки 3.3 м в одноэтажном доме</a></h2>
                         <p class="article-meta"><time datetime="2026-10-23">23 октября 2026</time> <span aria-hidden="true">·</span> 9 мин чтения</p>
-                        <p class="article-excerpt">Как шаг стропил связан с кровельным пирогом, почему сечение 50×150 не выручает на пролёте 6 метров и какие три узла определяют долговечность крыши одноэтажного дома.</p>
-                        <a class="read-more-btn" href="blog/shag-stropil-i-uzly-krovli.php">Читать разбор →</a>
+                        <p class="article-excerpt">Почему при высоте потолков 3.3 м микроклимат принципиально отличается: физиология аэроионизации, воздухообмен и рекуперация тепла.</p>
+                        <a class="read-more-btn" href="blog/ventilyaciya.php">Читать разбор →</a>
+                    </article>
+                    <article class="article-card" data-category="cat-2">
+                        <div class="article-image" style="background: linear-gradient(135deg, #efe7dc 0%, #cdb9a3 100%);" aria-hidden="true"></div>
+                        <span class="article-category">Фундамент · №01</span>
+                        <h2 class="article-card__title"><a href="blog/plita-na-penoplaste.php">Плита на пенопласте: расчет нагрузок, теплотехника и нормативная база СП 22.13330</a></h2>
+                        <p class="article-meta"><time datetime="2026-10-23">23 октября 2026</time> <span aria-hidden="true">·</span> 10 мин чтения</p>
+                        <p class="article-excerpt">Инженерный анализ плитного фундамента: распределение давлений, ликвидация морозного пучения и физика водяного теплого пола без радиаторов.</p>
+                        <a class="read-more-btn" href="blog/plita-na-penoplaste.php">Читать разбор →</a>
                     </article>
                 </div>
                 <!-- BLOG_CARDS:END -->

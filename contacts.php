@@ -60,10 +60,12 @@ include 'header.php';
                     <div class="contact-form-container">
                         <h2>Форма обратной связи</h2>
                         <form class="contact-form" id="contactForm" action="send-email.php" method="POST">
+                            <!-- Honeypots: скрыты от людей, боты заполняют. user_middle_name обязан остаться пустым. -->
                             <div style="position:absolute;left:-9999px;" aria-hidden="true">
+                                <input type="text" name="user_middle_name" tabindex="-1" autocomplete="off">
                                 <input type="text" name="website" tabindex="-1" autocomplete="off">
                             </div>
-                            <input type="hidden" name="form_ts" value="<?php echo time(); ?>">
+                            <input type="hidden" name="form_loaded_at" value="<?php echo time(); ?>">
                             <div class="form-group">
                                 <label>Ваше имя *</label>
                                 <input type="text" name="name" required>

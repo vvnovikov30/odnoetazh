@@ -20,7 +20,8 @@
     2. Доступность страниц, сгенерированных статей блога, robots.txt, sitemap.xml
        и отсутствие PHP-ошибок в HTML.
     3. Закрытие служебных файлов и файлов с ПДн (.htaccess: 403/404).
-    4. API заявок send-email.php: только POST, honeypot, form_ts, валидная заявка.
+    4. API заявок send-email.php: только POST, honeypot (user_middle_name + website),
+       тайминг form_loaded_at, валидная заявка.
     5. Медиа-ассеты и фотографии галереи проекта «Лесные Поляны».
 
 Локально валидная заявка действительно сохраняется в <repo>/../data/requests/requests.ndjson
@@ -57,6 +58,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 # send-email.php пишет ПДн в dirname(__DIR__) . '/data/requests' — на хостинге это
 # каталог ВНЕ вебрута, локально — соседняя с репозиторием папка.
 DATA_DIR = REPO_ROOT.parent / "data" / "requests"
+
+# Теневой лог блокировок send-email.php: dirname(__DIR__) . '/data/logs'.
+SPAM_LOG = REPO_ROOT.parent / "data" / "logs" / "spam_blocked.log"
 
 LOCAL_BASE_URL = "http://localhost:8000"
 PROD_HOST = "xn--80ahhialrcec8b1i.xn--p1ai"  # одноэтажники.рф
@@ -457,11 +461,11 @@ def read_ledger_bytes(path: Path) -> bytes | None:
 
 
 def restore_ledger(path: Path, original: bytes | None) -> str:
-    """Откатывает тестовую заявку: журнал возвращается к состоянию до прогона.
+    """Откатывает тестовые записи: файл возвращается к состоянию до прогона.
 
-    Тест не должен оставлять в журнале запись «Тест Тестович»: иначе каждый
-    прогон добавляет туда ПДн-мусор. Заодно следующий прогон снова проверяет
-    «запись добавлена» на чистом состоянии.
+    Тест не должен оставлять в журнале заявок запись «Тест Тестович», а в теневом
+    логе — записи о блокировках QA-запросов: иначе каждый прогон добавляет мусор.
+    Заодно следующий прогон снова проверяет «запись добавлена» на чистом состоянии.
     """
     try:
         if original is None:
@@ -469,8 +473,8 @@ def restore_ledger(path: Path, original: bytes | None) -> str:
         else:
             path.write_bytes(original)
     except OSError as exc:
-        return f"журнал не удалось вернуть в исходное состояние: {exc}"
-    return "тестовая запись удалена, журнал в исходном состоянии"
+        return f"файл не удалось вернуть в исходное состояние: {exc}"
+    return "тестовые записи удалены, файл в исходном состоянии"
 
 
 def tcp_reachable(host: str, port: int, timeout: float = 1.0) -> bool:
@@ -821,13 +825,24 @@ def scenario_security(reporter: Reporter, ctx: Context) -> None:
 
 
 # ===== СЦЕНАРИЙ 4: API ЗАЯВОК =====
+# Копия констант send-email.php v3.1: тайминг и контракт honeypot.
+MIN_FILL_TIME = 3
+
 BOT_PAYLOAD = {
     "name": "QA Bot",
     "phone": "+79990000001",
     "email": "",
     "projectType": "",
     "message": "",
+    # Honeypot v3.1: поле обязано присутствовать в POST и быть пустым.
+    "user_middle_name": "",
+    "website": "",
 }
+
+
+def bot_payload_without(*keys: str) -> dict[str, str]:
+    """Payload бота без указанных полей — проверка «поле не отправлено»."""
+    return {key: value for key, value in BOT_PAYLOAD.items() if key not in keys}
 
 
 def verify_bot_response(reporter: Reporter, ctx: Context, name: str, result: HttpResult,
@@ -839,8 +854,12 @@ def verify_bot_response(reporter: Reporter, ctx: Context, name: str, result: Htt
     payload = parse_json(result)
     if payload is None:
         problems.append(f"ответ не JSON: {result.text[:120]!r}")
-    elif payload.get("success") is not True:
-        problems.append(f"success != true: {payload}")
+    else:
+        if payload.get("success") is not True:
+            problems.append(f"success != true: {payload}")
+        # Silent Drop: бот не должен понять, что его распознали
+        if payload.get("status") != "success":
+            problems.append(f'в ответе нет status="success": {payload}')
 
     if ctx.is_local:
         after = snapshot_ledger(ledger)
@@ -855,11 +874,13 @@ def verify_bot_response(reporter: Reporter, ctx: Context, name: str, result: Htt
 
 
 def scenario_form_api(reporter: Reporter, ctx: Context) -> None:
-    """Сценарий 4: только POST, honeypot, form_ts и валидная заявка."""
+    """Сценарий 4: только POST, honeypot v3.1, тайминг form_loaded_at и валидная заявка."""
     reporter.scenario = "Сценарий 4. API заявок send-email.php"
     reporter.header(reporter.scenario)
 
     ledger = ctx.data_dir / "requests.ndjson"
+    # Тестовые блокировки пишутся в теневой лог: после 4.3c вернём его как было.
+    spam_log_original = read_ledger_bytes(SPAM_LOG) if ctx.is_local else None
     if ctx.is_local:
         removed = reset_local_rate_limit(ctx.data_dir)
         reporter.row("сброс локального rate-limit", INFO, 0.0,
@@ -874,23 +895,43 @@ def scenario_form_api(reporter: Reporter, ctx: Context) -> None:
         reporter.row("4.1 GET → 405 Method Not Allowed", FAIL, result.elapsed,
                      f"ожидался HTTP 405, получено {result.describe()}")
 
-    # 4.2 — honeypot заполнен (валидные поля тоже отправляем: иначе тест неинформативен)
-    payload = {**BOT_PAYLOAD, "website": "http://spam-link.com", "form_ts": str(int(time.time()) - 30)}
+    # 4.2 — legacy honeypot website заполнен (валидные поля тоже отправляем: иначе тест неинформативен)
+    payload = {**BOT_PAYLOAD, "website": "http://spam-link.com",
+               "form_loaded_at": str(int(time.time()) - 30)}
     before = snapshot_ledger(ledger)
     result = ctx.client.post("/send-email.php", payload)
-    verify_bot_response(reporter, ctx, "4.2 honeypot (website заполнен)", result, before, ledger)
+    verify_bot_response(reporter, ctx, "4.2 honeypot website заполнен", result, before, ledger)
+
+    # 4.2b — основной honeypot v3.1 заполнен
+    payload = {**BOT_PAYLOAD, "user_middle_name": "Бот Ботович",
+               "form_loaded_at": str(int(time.time()) - 30)}
+    before = snapshot_ledger(ledger)
+    result = ctx.client.post("/send-email.php", payload)
+    verify_bot_response(reporter, ctx, "4.2b honeypot user_middle_name заполнен", result, before, ledger)
 
     # 4.3a — форма «заполнена» мгновенно
-    payload = {**BOT_PAYLOAD, "website": "", "form_ts": str(int(time.time()))}
+    payload = {**BOT_PAYLOAD, "form_loaded_at": str(int(time.time()))}
     before = snapshot_ledger(ledger)
     result = ctx.client.post("/send-email.php", payload)
-    verify_bot_response(reporter, ctx, "4.3a form_ts = сейчас (< 2 c)", result, before, ledger)
+    verify_bot_response(reporter, ctx, f"4.3a form_loaded_at = сейчас (< {MIN_FILL_TIME} c)",
+                        result, before, ledger)
 
-    # 4.3b — form_ts отсутствует
-    payload = {**BOT_PAYLOAD, "website": ""}
+    # 4.3b — form_loaded_at отсутствует
+    payload = bot_payload_without("form_loaded_at")
     before = snapshot_ledger(ledger)
     result = ctx.client.post("/send-email.php", payload)
-    verify_bot_response(reporter, ctx, "4.3b form_ts отсутствует", result, before, ledger)
+    verify_bot_response(reporter, ctx, "4.3b form_loaded_at отсутствует", result, before, ledger)
+
+    # 4.3c — honeypot-поле не пришло в POST (контракт: поле обязательно)
+    payload = {**bot_payload_without("user_middle_name"),
+               "form_loaded_at": str(int(time.time()) - 30)}
+    before = snapshot_ledger(ledger)
+    result = ctx.client.post("/send-email.php", payload)
+    verify_bot_response(reporter, ctx, "4.3c user_middle_name не отправлен", result, before, ledger)
+
+    if ctx.is_local:
+        note = restore_ledger(SPAM_LOG, spam_log_original)
+        reporter.row("4.3d откат тестовых записей теневого лога", INFO, 0.0, note)
 
     # 4.4 — валидная заявка: только локально, на прод не отправляем
     if not ctx.is_local:
@@ -904,8 +945,9 @@ def scenario_form_api(reporter: Reporter, ctx: Context) -> None:
         "email": "",
         "projectType": "",
         "message": "",
+        "user_middle_name": "",
         "website": "",
-        "form_ts": str(int(time.time()) - 5),
+        "form_loaded_at": str(int(time.time()) - 5),
     }
     before = snapshot_ledger(ledger)
     original = read_ledger_bytes(ledger)  # для отката тестовой записи после проверки
@@ -977,6 +1019,25 @@ def scenario_assets(reporter: Reporter, ctx: Context) -> None:
 
 
 # ===== ЗАПУСК =====
+def configure_output() -> None:
+    """Защита от UnicodeEncodeError на рамках и стрелках в консоли Windows.
+
+    Python в пайпе/файле берёт кодировку из локали (cp1251) и падает на '─'.
+    Перенаправленный вывод переводим в UTF-8, живой терминал оставляем как есть
+    и лишь смягчаем неперекодируемые символы.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        if stream is None:
+            continue
+        try:
+            if not stream.isatty() or (stream.encoding or "").replace("-", "").lower() == "utf8":
+                stream.reconfigure(encoding="utf-8", errors="replace")
+            else:
+                stream.reconfigure(errors="replace")
+        except (AttributeError, ValueError, OSError):
+            pass
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Сценарные тесты сайта ОдноЭтажники.РФ (local: http://localhost:8000, "
@@ -997,6 +1058,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
 
 
 def main(argv: list[str] | None = None) -> int:
+    configure_output()
     args = parse_args(sys.argv[1:] if argv is None else argv)
     use_color = (not args.no_color) and "NO_COLOR" not in os.environ and (
         sys.stdout.isatty() or "FORCE_COLOR" in os.environ)
