@@ -94,6 +94,7 @@ require_once __DIR__ . '/../header.php';
                     <p>Приглашаем на тест-драйв в дом-шоурум 90.8 м² в Новой Москве: посмотрите кровельный пирог, шаг стропил и узлы примыкания так, как они собраны в готовом доме.</p>
                     <a class="article-cta__button" href="/#cta">Записаться на тест-драйв</a>
                 </aside>
+
             </div>
         </article>
 
@@ -113,4 +114,6 @@ require_once __DIR__ . '/../header.php';
             </figure>
         </div>
 
+<?php // FAQ (AIO): локальный реестр data/faq_registry.json + JSON-LD FAQPage. ?>
+<?php require_once __DIR__ . '/../includes/faq_block.php'; ?>
 <?php require_once __DIR__ . '/../footer.php'; ?>
