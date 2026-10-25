@@ -45,6 +45,6 @@ if (!isset($base_href)) {
         </div>
     </footer>
 
-    <script src="<?php echo $base_href; ?>scripts/main.js"></script>
+    <script src="<?php echo $base_href; ?>scripts/main.js?v=<?php echo file_exists(__DIR__ . '/scripts/main.js') ? filemtime(__DIR__ . '/scripts/main.js') : time(); ?>"></script>
 </body>
 </html>

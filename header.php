@@ -45,6 +45,8 @@ if (!isset($base_href)) {
     <?php endif; ?>
 
     <title><?php echo $page_title; ?></title>
+
+    <?php include_once __DIR__ . '/yandex-metrika.php'; ?>
 </head>
 <body>
     <!-- Header -->

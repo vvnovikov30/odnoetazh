@@ -36,6 +36,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
             const needsPhone = this.querySelector('input[name="phone"]') !== null;
+
+            // Цель Метрики: выбранный формат фиксируем ДО form.reset(),
+            // иначе radio вернётся к default и в отчёт уйдёт неверный intent.
+            const intentInput = this.querySelector('input[name="intent"]:checked');
+            const selectedIntent = intentInput ? intentInput.value : 'Не указан';
             
             // Валидация
             if (!data.name || (needsPhone && !data.phone)) {
@@ -58,6 +63,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (ok && result.success) {
                     alert(result.message || 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.');
                     this.reset();
+
+                    // Цель Метрики: успешная отправка заявки через #ctaForm.
+                    if (this.id === 'ctaForm' && typeof window.ym === 'function') {
+                        window.ym(113775501, 'reachGoal', 'lead_form_submitted', { intent: selectedIntent });
+                    }
                 } else if (status === 429) {
                     alert(result.message || 'Слишком много заявок. Попробуйте позже.');
                 } else {
@@ -445,6 +455,30 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }, { passive: true });
     }
+
+    // ===== 10. Цели Метрики: клики по прямым контактам =====
+    // Делегирование: телефоны, Telegram и e-mail встречаются в шапке,
+    // футере и подгружаемых блоках, поэтому слушаем документ целиком.
+    document.addEventListener('click', function (e) {
+        if (typeof window.ym !== 'function') {
+            return;
+        }
+
+        const link = e.target.closest ? e.target.closest('a') : null;
+        if (!link) {
+            return;
+        }
+
+        const href = link.getAttribute('href') || '';
+
+        if (href.startsWith('tel:')) {
+            window.ym(113775501, 'reachGoal', 'click_phone', { phone: href });
+        } else if (href.includes('t.me/')) {
+            window.ym(113775501, 'reachGoal', 'click_telegram');
+        } else if (href.startsWith('mailto:')) {
+            window.ym(113775501, 'reachGoal', 'click_email');
+        }
+    });
 
     console.log('✅ ОдноЭтажники.РФ JavaScript инициализирован');
 });
